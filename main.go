@@ -21,16 +21,25 @@ func main() {
 	}
 	nested3 := &api.Nested{
 		DoubleRange: nil,
+		Hello:       []string{"hello"},
 	}
 
 	hash1, err := nested.Hash(nil)
-	if err != nil {panic(err)}
+	if err != nil {
+		panic(err)
+	}
 	hash2, err := nested2.Hash(nil)
-	if err != nil {panic(err)}
+	if err != nil {
+		panic(err)
+	}
 	hash3, err := nested3.Hash(nil)
-	if err != nil {panic(err)}
+	if err != nil {
+		panic(err)
+	}
 	hash4, err := nested3.Hash(nil)
-	if err != nil {panic(err)}
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(hash1)
 	fmt.Println(hash2)
 	fmt.Println(hash3)

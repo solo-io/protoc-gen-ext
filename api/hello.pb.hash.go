@@ -38,24 +38,20 @@ var (
 )
 
 // Hash function
-func (m *Int64Range) Hash(hasher hash.Hash64) (uint64, error) {
+func (m *Strings) Hash(hasher hash.Hash64) (uint64, error) {
 	if m == nil {
 		return 0, nil
 	}
 	if hasher == nil {
 		hasher = fnv.New64()
 	}
-	hasher.Reset()
 	var err error
-	// var val uint64
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetStart())
-	if err != nil {
+	if _, err = hasher.Write([]byte(m.GetStart())); err != nil {
 		return 0, err
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetEnd())
-	if err != nil {
+	if _, err = hasher.Write([]byte(m.GetEnd())); err != nil {
 		return 0, err
 	}
 
@@ -70,9 +66,7 @@ func (m *DoubleRange) Hash(hasher hash.Hash64) (uint64, error) {
 	if hasher == nil {
 		hasher = fnv.New64()
 	}
-	hasher.Reset()
 	var err error
-	// var val uint64
 
 	err = binary.Write(hasher, binary.LittleEndian, m.GetStart())
 	if err != nil {
@@ -95,30 +89,82 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 	if hasher == nil {
 		hasher = fnv.New64()
 	}
-	hasher.Reset()
 	var err error
-	var val uint64
 
 	if h, ok := interface{}(m.GetDoubleRange()).(interface {
 		Hash(hasher hash.Hash64) (uint64, error)
 	}); ok {
-		if val, err = h.Hash(hasher); err != nil {
+		if _, err = h.Hash(hasher); err != nil {
 			return 0, err
-		} else {
-			err = binary.Write(hasher, binary.LittleEndian, val)
-			if err != nil {
-				return 0, err
-			}
 		}
 	} else {
-		if val, err = hashstructure.Hash(h, nil); err != nil {
+		if val, err := hashstructure.Hash(m.GetDoubleRange(), nil); err != nil {
 			return 0, err
 		} else {
-			err = binary.Write(hasher, binary.LittleEndian, val)
-			if err != nil {
+			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
 				return 0, err
 			}
 		}
+	}
+
+	if h, ok := interface{}(m.GetStrings()).(interface {
+		Hash(hasher hash.Hash64) (uint64, error)
+	}); ok {
+		if _, err = h.Hash(hasher); err != nil {
+			return 0, err
+		}
+	} else {
+		if val, err := hashstructure.Hash(m.GetStrings(), nil); err != nil {
+			return 0, err
+		} else {
+			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+				return 0, err
+			}
+		}
+	}
+
+	if h, ok := interface{}(m.GetDetails()).(interface {
+		Hash(hasher hash.Hash64) (uint64, error)
+	}); ok {
+		if _, err = h.Hash(hasher); err != nil {
+			return 0, err
+		}
+	} else {
+		if val, err := hashstructure.Hash(m.GetDetails(), nil); err != nil {
+			return 0, err
+		} else {
+			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+				return 0, err
+			}
+		}
+	}
+
+	for _, v := range m.GetHello() {
+
+		if _, err = hasher.Write([]byte(v)); err != nil {
+			return 0, err
+		}
+
+	}
+
+	for _, v := range m.GetX() {
+
+		if h, ok := interface{}(v).(interface {
+			Hash(hasher hash.Hash64) (uint64, error)
+		}); ok {
+			if _, err = h.Hash(hasher); err != nil {
+				return 0, err
+			}
+		} else {
+			if val, err := hashstructure.Hash(v, nil); err != nil {
+				return 0, err
+			} else {
+				if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+					return 0, err
+				}
+			}
+		}
+
 	}
 
 	return hasher.Sum64(), nil
