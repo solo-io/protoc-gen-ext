@@ -5,7 +5,7 @@ import (
 
 	"github.com/lyft/protoc-gen-star"
 	"github.com/lyft/protoc-gen-star/lang/go"
-	golang "github.com/solo-io/protoc-gen/protoc-gen-hash/templates/go"
+	golang "github.com/solo-io/protoc-gen-ext/templates/go"
 )
 
 type RegisterFn func(tpl *template.Template, params pgs.Parameters)

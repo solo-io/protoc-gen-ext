@@ -1,7 +1,7 @@
 syntax = "proto2";
-package hash;
+package ext;
 
-option go_package = "github.com/solo-io/protoc-gen/protoc-gen-hash/hash";
+option go_package = "github.com/solo-io/protoc-gen-ext/ext";
 
 import "google/protobuf/descriptor.proto";
 import "google/protobuf/duration.proto";
@@ -19,6 +19,8 @@ extend google.protobuf.FileOptions {
     // Disabled nullifies any validation rules for this message, including any
     // message fields associated with it that do support validation.
     optional bool hash_all = 1071;
+
+    optional bool equal_all = 1072;
 }
 
 // Validation rules applied at the field level

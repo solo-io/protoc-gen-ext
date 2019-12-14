@@ -3,7 +3,7 @@ package module
 import (
 	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
-	"github.com/solo-io/protoc-gen/protoc-gen-hash/templates"
+	"github.com/solo-io/protoc-gen-ext/templates"
 )
 
 const (

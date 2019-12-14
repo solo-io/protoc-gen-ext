@@ -1,4 +1,4 @@
-module github.com/solo-io/protoc-gen
+module github.com/solo-io/protoc-gen-ext
 
 go 1.13
 
