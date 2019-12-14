@@ -36,4 +36,10 @@ message Nested {
 
     repeated string hello = 4;
     repeated Strings x = 7;
+
+    map<string, string> initial = 9;
+}
+
+
+message Empty {
 }

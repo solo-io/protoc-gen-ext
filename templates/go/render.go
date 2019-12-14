@@ -5,12 +5,14 @@ import (
 	"errors"
 	"text/template"
 
+	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	pgs "github.com/lyft/protoc-gen-star"
 )
 
 type Value struct {
 	Name           string
 	Hasher         string
+	Nullable       string
 	InnerTemplates struct {
 		Key   string
 		Value string
@@ -19,16 +21,16 @@ type Value struct {
 
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
+	var nullable string
 
 	if field.Type().ProtoType().IsNumeric() ||
 		field.Type().ProtoType() == pgs.BoolT ||
 		field.Type().IsEnum() {
 
 		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
+	} else if field.Type().IsMap() {
+		return fns.renderMap(field)
 	} else if field.Type().IsRepeated() {
-		if field.Type().IsMap() {
-			return fns.renderMap(field)
-		}
 		return fns.renderRepeated(field)
 	} else {
 		switch field.Type().ProtoType() {
@@ -44,15 +46,29 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	}
 
 	var b bytes.Buffer
-	err := tpl.Execute(&b, Value{Name: fns.accessor(field), Hasher: "hasher"})
+	err := tpl.Execute(&b, Value{
+		Name:     fns.accessor(field),
+		Hasher:   "hasher",
+		Nullable: nullable,
+	})
 	return b.String(), err
 }
 
+func isNullable(options []*descriptor.UninterpretedOption) bool {
+	for range options {
+		return true
+	}
+	return false
+}
 
 func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
-	innerTemplate, err := fns.simpleRender(field, "v", "hasher")
+	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", "innerHash")
+	if err != nil {
+		return "", err
+	}
+	keyTemplate, err := fns.simpleRender(field.Type().Key(), "k", "innerHash")
 	if err != nil {
 		return "", err
 	}
@@ -62,17 +78,16 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 		InnerTemplates: struct {
 			Key   string
 			Value string
-		}{Value: innerTemplate},
+		}{Value: valueTemplate, Key: keyTemplate},
 	}
-	outerTpl := template.Must(fns.tpl.New("map").Parse(repeatedTpl))
+	outerTpl := template.Must(fns.tpl.New("repeated").Parse(mapTpl))
 	err = outerTpl.Execute(&b, values)
 	return b.String(), err
 }
-
 
 func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 	var b bytes.Buffer
-	innerTemplate, err := fns.simpleRender(field, "v", "hasher")
+	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", "hasher")
 	if err != nil {
 		return "", err
 	}
@@ -89,16 +104,14 @@ func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 	return b.String(), err
 }
 
-
-func (fns goSharedFuncs) simpleRender(field pgs.Field, valueName, hasherName string) (string, error) {
-
+func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, hasherName string) (string, error) {
 	var tpl *template.Template
-	if field.Type().ProtoType().IsNumeric() ||
-		field.Type().ProtoType() == pgs.BoolT ||
-		field.Type().IsEnum() {
+	if field.ProtoType().IsNumeric() ||
+		field.ProtoType() == pgs.BoolT ||
+		field.IsEnum() {
 		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
 	} else {
-		switch field.Type().ProtoType() {
+		switch field.ProtoType() {
 		case pgs.BytesT:
 			tpl = template.Must(fns.tpl.New("bytes").Parse(bytesTpl))
 		case pgs.StringT:

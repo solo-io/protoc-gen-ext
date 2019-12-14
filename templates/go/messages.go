@@ -1,6 +1,7 @@
 package golang
 
 const messageTpl = `
+		{{ .Nullable }}
 		if h, ok := interface{}({{ .Name }}).(interface{ Hash({{ .Hasher }} hash.Hash64) (uint64, error) }); ok {
 			if _, err = h.Hash({{ .Hasher }}); err != nil {
 				return  0, err 
@@ -34,17 +35,23 @@ const stringTpl = `
 `
 
 const mapTpl = `
-		innerHash := fnv.Hash64()
-		for k , v := range {{ .Name }} {
-			innerHash.Reset()
-			
-			{{  }}
+	{
+			var result uint64
+			innerHash := fnv.New64()
+			for k , v := range {{ .Name }} {
+				innerHash.Reset()
+	
+				{{ .InnerTemplates.Value }}
+	
+	
+				{{ .InnerTemplates.Key }}
 
-			
-			err = binary.Write(hasher, binary.LittleEndian, innerHash.Sum64())
+				result = result ^ innerHash.Sum64()
+			}
+			err = binary.Write(hasher, binary.LittleEndian, result)
 			if err != nil {return 0, err}
-			err = binary.Write(hasher, binary.LittleEndian, innerHash.Sum64())
-		}
+			
+	}
 `
 
 const repeatedTpl = `

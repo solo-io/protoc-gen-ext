@@ -1,0 +1,29 @@
+syntax = "proto2";
+package hash;
+
+option go_package = "github.com/solo-io/protoc-gen/protoc-gen-hash/hash";
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+// Validation rules applied at the message level
+extend google.protobuf.MessageOptions {
+    // Disabled nullifies any validation rules for this message, including any
+    // message fields associated with it that do support validation.
+    optional bool skip_hashing = 1071;
+}
+
+// Validation rules applied at the message level
+extend google.protobuf.FileOptions {
+    // Disabled nullifies any validation rules for this message, including any
+    // message fields associated with it that do support validation.
+    optional bool hash_all = 1071;
+}
+
+// Validation rules applied at the field level
+extend google.protobuf.FieldOptions {
+    // Rules specify the validations to be performed on this field. By default,
+    // no validation is performed against a field.
+    optional bool skip_hashing = 1071;
+}

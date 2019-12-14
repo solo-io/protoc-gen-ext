@@ -29,6 +29,7 @@ func (m *Module) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Packag
 	tpl := templates.Template(m.Parameters())
 
 	for _, f := range targets {
+
 		m.Push(f.Name().String())
 		out := templates.FilePathFor(tpl)(f, m.ctx, tpl)
 		if out != nil {
