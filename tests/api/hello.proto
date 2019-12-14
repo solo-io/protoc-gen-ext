@@ -26,6 +26,11 @@ message Simple {
     fixed64 fixed64Test = 13;
     sfixed32 sfixed32Test = 14;
     sfixed64 sfixed64Test = 15;
+
+    // skipped primitives
+    string str_skipped = 16 [(ext.skip_hashing) = true];
+    uint32 int_skipped = 17 [(ext.skip_hashing) = true];
+
 }
 
 enum Test {
@@ -43,6 +48,9 @@ message Nested {
     Empty empty = 3;
 
     repeated string hello = 4;
+
+    Simple skipper = 6 [(ext.skip_hashing) = true];
+
     repeated Simple x = 7;
 
     map<string, Simple> initial = 9;

@@ -10,6 +10,25 @@ import (
 var _ = Describe("hash", func() {
 	testRuns := 100
 	Context("simple (non-nested)", func() {
+
+		var performTest = func(testCases []*api.Simple) {
+			hashes := make([]uint64, len(testCases))
+			for i, v := range testCases {
+				hash, err := v.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+				hashes[i] = hash
+			}
+			for idx := 0; idx < testRuns; idx++ {
+				newHashes := make([]uint64, len(testCases))
+				for i, v := range testCases {
+					hash, err := v.Hash(nil)
+					Expect(err).NotTo(HaveOccurred())
+					Expect(hash).To(Equal(hashes[i]))
+					newHashes[i] = hash
+				}
+				Expect(allDifferent(newHashes)).To(BeTrue())
+			}
+		}
 		It("can handle different simple objects", func() {
 			testCases := []*api.Simple{
 				{
@@ -47,6 +66,22 @@ var _ = Describe("hash", func() {
 					Sfixed64Test: 29,
 				},
 			}
+			performTest(testCases)
+		})
+
+		It("skips fields which are annotated with skip_hashing field", func() {
+			testCases := []*api.Simple{
+				{
+					Str: "test",
+					IntSkipped: 32,
+					StrSkipped: "hello",
+				},
+				{
+					Str: "test",
+					IntSkipped: 45,
+					StrSkipped: "world",
+				},
+			}
 			hashes := make([]uint64, len(testCases))
 			for i, v := range testCases {
 				hash, err := v.Hash(nil)
@@ -61,12 +96,13 @@ var _ = Describe("hash", func() {
 					Expect(hash).To(Equal(hashes[i]))
 					newHashes[i] = hash
 				}
-				Expect(allDifferent(newHashes)).To(BeTrue())
+				Expect(allDifferent(newHashes)).To(BeFalse())
 			}
+
 		})
 	})
 
-	FContext("complex (nested)", func() {
+	Context("complex (nested)", func() {
 		It("can produce the same object across many runs", func() {
 			testObject := &api.Nested{
 				Simple:  &api.Simple{},
@@ -87,7 +123,7 @@ var _ = Describe("hash", func() {
 			}
 		})
 
-		FIt("can produce the same object across many runs", func() {
+		It("can produce the same object across many runs", func() {
 			testCases := []*api.Nested{
 				{
 					Simple:  &api.Simple{},

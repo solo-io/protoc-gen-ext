@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	pgs "github.com/lyft/protoc-gen-star"
+	"github.com/solo-io/protoc-gen-ext/ext"
 )
 
 type Value struct {
@@ -22,6 +23,16 @@ type Value struct {
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
 	var nullable string
+
+	// check if skip hash is set on a given field
+	var skipHash bool
+	_, err := field.Extension(ext.E_SkipHashing, &skipHash)
+	if err != nil {
+		return "", err
+	}
+	if skipHash {
+		return "", nil
+	}
 
 	if field.Type().ProtoType().IsNumeric() ||
 		field.Type().ProtoType() == pgs.BoolT ||
@@ -46,7 +57,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	}
 
 	var b bytes.Buffer
-	err := tpl.Execute(&b, Value{
+	err = tpl.Execute(&b, Value{
 		Name:     fns.accessor(field),
 		Hasher:   "hasher",
 		Nullable: nullable,
