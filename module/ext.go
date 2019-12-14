@@ -15,7 +15,7 @@ type Module struct {
 	ctx pgsgo.Context
 }
 
-func Hasher() pgs.Module { return &Module{ModuleBase: &pgs.ModuleBase{}} }
+func Ext() pgs.Module { return &Module{ModuleBase: &pgs.ModuleBase{}} }
 
 func (m *Module) InitContext(ctx pgs.BuildContext) {
 	m.ModuleBase.InitContext(ctx)
