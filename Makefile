@@ -14,10 +14,12 @@ GO_IMPORT_SPACES := ${EXT_IMPORT},\
 GO_IMPORT:=$(subst $(space),,$(GO_IMPORT_SPACES))
 
 
-.PHONY: generated-code
+
+PHONE: generated-code
 generated-code:
-	# generates the PGV binary and installs it into $$GOPATH/bin
-	go install .
+	protoc -I=. --go_out="${EXT_IMPORT}:." ext/ext.proto
+	mv ${PACKAGE}/ext/ext.pb.go ext; rm -rf github.com
+	protoc -I=. --go_out="." --ext_out="."  tests/api/hello.proto
 
 PHONY: protoc-gen-ext
 protoc-gen-ext:

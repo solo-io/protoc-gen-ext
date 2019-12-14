@@ -3,41 +3,49 @@ syntax = "proto3";
 package envoy.type;
 import "google/protobuf/struct.proto";
 
-option go_package = "hello";
+import "ext/ext.proto";
+option (ext.hash_all) = true;
 
-// [#protodoc-title: Range]
+option go_package = "api";
 
-// Specifies the int64 start and end of the range using half-open interval semantics [start,
-// end).
-message Strings {
-    // start of the range (inclusive)
-    string start = 1;
 
-    // end of the range (exclusive)
-    string end = 2;
+// proto object to test all base objects
+message Simple {
+    string str = 1;
+    bytes byt = 2;
+    uint32 testUint32 = 3;
+    uint64 testUint64 = 4;
+    bool testBool = 5;
+    double doubleTest = 6;
+    float floatTest = 7;
+    int32 int32Test = 8;
+    int64 int64Test = 9;
+    sint32 sint32Test = 10;
+    sint64 sint64Test = 11;
+    fixed32 fixed32Test = 12;
+    fixed64 fixed64Test = 13;
+    sfixed32 sfixed32Test = 14;
+    sfixed64 sfixed64Test = 15;
 }
 
-// Specifies the double start and end of the range using half-open interval semantics [start,
-// end).
-message DoubleRange {
-    // start of the range (inclusive)
-    double start = 1;
-
-    // end of the range (exclusive)
-    double end = 2;
+enum Test {
+    HELLO = 0;
+    WORLD = 1;
 }
 
 message Nested {
-    DoubleRange double_range = 1;
-
-    Strings strings = 2;
+    Simple simple = 1;
 
     google.protobuf.Struct details = 5;
 
-    repeated string hello = 4;
-    repeated Strings x = 7;
+    Test test = 2;
 
-    map<string, string> initial = 9;
+    Empty empty = 3;
+
+    repeated string hello = 4;
+    repeated Simple x = 7;
+
+    map<string, Simple> initial = 9;
 }
 
 

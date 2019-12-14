@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"fmt"
 	"text/template"
 
 	"github.com/lyft/protoc-gen-star"
@@ -19,7 +20,7 @@ func Template(params pgs.Parameters) *template.Template {
 	return tpl
 }
 
-func FilePathFor(tpl *template.Template) FilePathFn {
+func FilePathFor(tpl *template.Template, moduleName string) FilePathFn {
 	switch tpl.Name() {
 	// case "h":
 	// 	return cc.CcFilePath
@@ -30,7 +31,7 @@ func FilePathFor(tpl *template.Template) FilePathFn {
 	default:
 		return func(f pgs.File, ctx pgsgo.Context, tpl *template.Template) *pgs.FilePath {
 			out := ctx.OutputPath(f)
-			out = out.SetExt(".hash." + tpl.Name())
+			out = out.SetExt(fmt.Sprintf(".%s.", moduleName) + tpl.Name())
 			return &out
 		}
 	}
