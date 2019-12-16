@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"text/template"
 
-	"github.com/lyft/protoc-gen-star"
-	"github.com/lyft/protoc-gen-star/lang/go"
+	pgs "github.com/lyft/protoc-gen-star"
+	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	golang "github.com/solo-io/protoc-gen-ext/templates/go"
 )
 
 type RegisterFn func(tpl *template.Template, params pgs.Parameters)
 type FilePathFn func(f pgs.File, ctx pgsgo.Context, tpl *template.Template) *pgs.FilePath
-
 
 func Template(params pgs.Parameters) *template.Template {
 	tpl := template.New("go")

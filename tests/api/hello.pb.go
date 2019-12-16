@@ -5,10 +5,11 @@ package api
 
 import (
 	fmt "fmt"
+	math "math"
+
 	proto "github.com/golang/protobuf/proto"
 	_struct "github.com/golang/protobuf/ptypes/struct"
 	_ "github.com/solo-io/protoc-gen-ext/ext"
-	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

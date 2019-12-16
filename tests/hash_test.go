@@ -72,12 +72,12 @@ var _ = Describe("hash", func() {
 		It("skips fields which are annotated with skip_hashing field", func() {
 			testCases := []*api.Simple{
 				{
-					Str: "test",
+					Str:        "test",
 					IntSkipped: 32,
 					StrSkipped: "hello",
 				},
 				{
-					Str: "test",
+					Str:        "test",
 					IntSkipped: 45,
 					StrSkipped: "world",
 				},
@@ -136,24 +136,24 @@ var _ = Describe("hash", func() {
 					},
 				},
 				{
-					Simple:               nil,
-					Details:              nil,
-					Hello:                nil,
-					X:                    nil,
-					Initial:              nil,
+					Simple:  nil,
+					Details: nil,
+					Hello:   nil,
+					X:       nil,
+					Initial: nil,
 				},
 				{
-					Simple:               &api.Simple{
-						Str:                  "gello",
-						Byt:                  []byte("world"),
-						TestUint32:           123,
-						TestUint64:           32,
-						TestBool:             true,
+					Simple: &api.Simple{
+						Str:        "gello",
+						Byt:        []byte("world"),
+						TestUint32: 123,
+						TestUint64: 32,
+						TestBool:   true,
 					},
-					Details:              nil,
-					Hello:   			[]string{"", "test"},
-					X:                    []*api.Simple{nil, nil, &api.Simple{}},
-					Initial:              nil,
+					Details: nil,
+					Hello:   []string{"", "test"},
+					X:       []*api.Simple{nil, nil, &api.Simple{}},
+					Initial: nil,
 				},
 			}
 			hashes := make([]uint64, len(testCases))

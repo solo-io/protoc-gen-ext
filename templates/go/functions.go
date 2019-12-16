@@ -10,14 +10,14 @@ import (
 	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/iancoleman/strcase"
-	"github.com/lyft/protoc-gen-star"
-	"github.com/lyft/protoc-gen-star/lang/go"
+	pgs "github.com/lyft/protoc-gen-star"
+	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 )
 
 func register(tpl *template.Template, params pgs.Parameters) {
 	fns := goSharedFuncs{
 		Context: pgsgo.InitContext(params),
-		tpl: tpl,
+		tpl:     tpl,
 	}
 
 	tpl.Funcs(map[string]interface{}{
@@ -47,7 +47,7 @@ func register(tpl *template.Template, params pgs.Parameters) {
 	})
 }
 
-type goSharedFuncs struct{
+type goSharedFuncs struct {
 	pgsgo.Context
 	tpl *template.Template
 }
