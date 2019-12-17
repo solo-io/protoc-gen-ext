@@ -3,6 +3,7 @@ syntax = "proto3";
 package envoy.type;
 import "google/protobuf/struct.proto";
 
+import "gogoproto/gogo.proto";
 import "ext/ext.proto";
 option (ext.hash_all) = true;
 
@@ -54,6 +55,8 @@ message Nested {
     repeated Simple x = 7;
 
     map<string, Simple> initial = 9;
+
+    Empty emptyNonNullable = 10 [(gogoproto.nullable) = false];
 }
 
 

@@ -18,7 +18,6 @@ func register(tpl *template.Template, params pgs.Parameters) {
 	}
 
 	tpl.Funcs(map[string]interface{}{
-		"accessor":      fns.accessor,
 		"snakeCase":     fns.snakeCase,
 		"cmt":           pgs.C80,
 		"isBytes":       fns.isBytes,
@@ -40,7 +39,10 @@ type goSharedFuncs struct {
 	tpl *template.Template
 }
 
-func (fns goSharedFuncs) accessor(field pgs.Field) string {
+func (fns goSharedFuncs) accessor(field pgs.Field, renderPointerName bool) string {
+	if renderPointerName {
+		return fmt.Sprintf("&m.%s", fns.Name(field))
+	}
 	return fmt.Sprintf("m.Get%s()", fns.Name(field))
 }
 

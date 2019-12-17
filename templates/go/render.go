@@ -8,12 +8,12 @@ import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	pgs "github.com/lyft/protoc-gen-star"
 	"github.com/solo-io/protoc-gen-ext/ext"
+	"github.com/solo-io/protoc-gen-ext/ext/gogoproto"
 )
 
 type Value struct {
 	Name           string
 	Hasher         string
-	Nullable       string
 	InnerTemplates struct {
 		Key   string
 		Value string
@@ -22,7 +22,14 @@ type Value struct {
 
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
-	var nullable string
+
+	// fmt.Fprintf(os.Stderr, func() string{
+	// 	b := &bytes.Buffer{}
+	// 	if err := (&jsonpb.Marshaler{}).Marshal(b, field.Descriptor()); err != nil {
+	// 		panic(err)
+	// 	}
+	// 	return b.String()
+	// }()  )
 
 	// check if skip hash is set on a given field
 	var skipHash bool
@@ -34,15 +41,24 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		return "", nil
 	}
 
+	// ok isn't used, the value isn't set.
+	var gogoNullable bool
+	ok, err := field.Extension(gogoproto.E_Nullable, &gogoNullable)
+	if err != nil {
+		return "", err
+	}
+	// If ok and gogoNullable is false, then we need to render name differently
+	renderPointerName := ok && !gogoNullable
+
 	if field.Type().ProtoType().IsNumeric() ||
 		field.Type().ProtoType() == pgs.BoolT ||
 		field.Type().IsEnum() {
 
 		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
 	} else if field.Type().IsMap() {
-		return fns.renderMap(field)
+		return fns.renderMap(field, renderPointerName)
 	} else if field.Type().IsRepeated() {
-		return fns.renderRepeated(field)
+		return fns.renderRepeated(field, renderPointerName)
 	} else {
 		switch field.Type().ProtoType() {
 		case pgs.BytesT:
@@ -58,9 +74,8 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
 	err = tpl.Execute(&b, Value{
-		Name:     fns.accessor(field),
+		Name:     fns.accessor(field, renderPointerName),
 		Hasher:   "hasher",
-		Nullable: nullable,
 	})
 	return b.String(), err
 }
@@ -72,7 +87,7 @@ func isNullable(options []*descriptor.UninterpretedOption) bool {
 	return false
 }
 
-func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
+func (fns goSharedFuncs) renderMap(field pgs.Field, nullable bool) (string, error) {
 
 	var b bytes.Buffer
 	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", "innerHash")
@@ -84,7 +99,7 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 		return "", err
 	}
 	values := Value{
-		Name:   fns.accessor(field),
+		Name:   fns.accessor(field, nullable),
 		Hasher: "innerHash",
 		InnerTemplates: struct {
 			Key   string
@@ -96,14 +111,14 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 	return b.String(), err
 }
 
-func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
+func (fns goSharedFuncs) renderRepeated(field pgs.Field, nullable bool) (string, error) {
 	var b bytes.Buffer
 	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", "hasher")
 	if err != nil {
 		return "", err
 	}
 	values := Value{
-		Name:   fns.accessor(field),
+		Name:   fns.accessor(field, nullable),
 		Hasher: "innerHash",
 		InnerTemplates: struct {
 			Key   string

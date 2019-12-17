@@ -1,8 +1,7 @@
 package golang
 
 const messageTpl = `
-		{{ .Nullable }}
-		if h, ok := interface{}({{ .Name }}).(interface{ Hash({{ .Hasher }} hash.Hash64) (uint64, error) }); ok {
+		if h, ok := interface{}({{ .Name }}).(safe_hasher.SafeHasher); ok {
 			if _, err = h.Hash({{ .Hasher }}); err != nil {
 				return  0, err 
 			}

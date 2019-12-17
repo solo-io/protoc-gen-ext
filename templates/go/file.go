@@ -12,8 +12,8 @@ import (
 	"hash"
 	"hash/fnv"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/mitchellh/hashstructure"
+	safe_hasher "github.com/solo-io/protoc-gen-ext/pkg/hasher"
 
 	{{ range $path, $pkg := enumPackages (externalEnums .) }}
 		{{ $pkg }} "{{ $path }}"
