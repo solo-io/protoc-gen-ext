@@ -23,14 +23,6 @@ type Value struct {
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
 
-	// fmt.Fprintf(os.Stderr, func() string{
-	// 	b := &bytes.Buffer{}
-	// 	if err := (&jsonpb.Marshaler{}).Marshal(b, field.Descriptor()); err != nil {
-	// 		panic(err)
-	// 	}
-	// 	return b.String()
-	// }()  )
-
 	// check if skip hash is set on a given field
 	var skipHash bool
 	_, err := field.Extension(extproto.E_SkipHashing, &skipHash)
