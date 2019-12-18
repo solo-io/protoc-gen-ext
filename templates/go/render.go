@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	pgs "github.com/lyft/protoc-gen-star"
-	"github.com/solo-io/protoc-gen-ext/ext"
-	"github.com/solo-io/protoc-gen-ext/ext/gogoproto"
+	"github.com/solo-io/protoc-gen-ext/extproto"
+	"github.com/solo-io/protoc-gen-ext/extproto/gogoproto"
 )
 
 type Value struct {
@@ -33,7 +33,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 	// check if skip hash is set on a given field
 	var skipHash bool
-	_, err := field.Extension(ext.E_SkipHashing, &skipHash)
+	_, err := field.Extension(extproto.E_SkipHashing, &skipHash)
 	if err != nil {
 		return "", err
 	}

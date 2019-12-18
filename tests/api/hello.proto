@@ -4,8 +4,8 @@ package envoy.type;
 import "google/protobuf/struct.proto";
 
 import "gogoproto/gogo.proto";
-import "ext/ext.proto";
-option (ext.hash_all) = true;
+import "extproto/ext.proto";
+option (extproto.hash_all) = true;
 
 option go_package = "api";
 
@@ -29,8 +29,8 @@ message Simple {
     sfixed64 sfixed64Test = 15;
 
     // skipped primitives
-    string str_skipped = 16 [(ext.skip_hashing) = true];
-    uint32 int_skipped = 17 [(ext.skip_hashing) = true];
+    string str_skipped = 16 [(extproto.skip_hashing) = true];
+    uint32 int_skipped = 17 [(extproto.skip_hashing) = true];
 
 }
 
@@ -50,7 +50,7 @@ message Nested {
 
     repeated string hello = 4;
 
-    Simple skipper = 6 [(ext.skip_hashing) = true];
+    Simple skipper = 6 [(extproto.skip_hashing) = true];
 
     repeated Simple x = 7;
 

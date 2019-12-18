@@ -42,9 +42,9 @@ GO_IMPORT:=$(subst $(space),,$(GO_IMPORT_SPACES))
 
 PHONE: generated-code
 generated-code:
-	protoc -I=. --go_out="${EXT_IMPORT}:." ext/ext.proto
-	protoc -I=. --go_out="${EXT_IMPORT}:." ext/gogoproto/gogo.proto
-	cp -r ${PACKAGE}/ext/ ext; rm -rf github.com
+	protoc -I=. --go_out="${EXT_IMPORT}:." extproto/ext.proto
+	protoc -I=. --go_out="${EXT_IMPORT}:." extproto/gogoproto/gogo.proto
+	cp -r ${PACKAGE}/extproto/ extproto; rm -rf github.com
 	protoc -I=. -I=./vendor/github.com/gogo/protobuf --go_out="." --ext_out="."  tests/api/hello.proto
 
 
