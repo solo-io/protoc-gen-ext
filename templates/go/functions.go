@@ -39,11 +39,12 @@ type goSharedFuncs struct {
 	tpl *template.Template
 }
 
-func (fns goSharedFuncs) accessor(field pgs.Field, renderPointerName bool) string {
-	if renderPointerName {
-		return fmt.Sprintf("&m.%s", fns.Name(field))
-	}
+func (fns goSharedFuncs) accessor(field pgs.Field) string {
 	return fmt.Sprintf("m.Get%s()", fns.Name(field))
+}
+
+func (fns goSharedFuncs) pointerAccessor(field pgs.Field) string {
+	return fmt.Sprintf("&m.%s", fns.Name(field))
 }
 
 func (fns goSharedFuncs) lookup(f pgs.Field, name string) string {

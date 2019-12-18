@@ -50,15 +50,16 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	// If ok and gogoNullable is false, then we need to render name differently
 	renderPointerName := ok && !gogoNullable
 
+	name := fns.accessor(field)
 	if field.Type().ProtoType().IsNumeric() ||
 		field.Type().ProtoType() == pgs.BoolT ||
 		field.Type().IsEnum() {
 
 		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
 	} else if field.Type().IsMap() {
-		return fns.renderMap(field, renderPointerName)
+		return fns.renderMap(field)
 	} else if field.Type().IsRepeated() {
-		return fns.renderRepeated(field, renderPointerName)
+		return fns.renderRepeated(field)
 	} else {
 		switch field.Type().ProtoType() {
 		case pgs.BytesT:
@@ -66,6 +67,9 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
+			if renderPointerName {
+				name = fns.pointerAccessor(field)
+			}
 			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 		default:
 			return "", errors.New("unknown type")
@@ -74,7 +78,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
 	err = tpl.Execute(&b, Value{
-		Name:     fns.accessor(field, renderPointerName),
+		Name:     name,
 		Hasher:   "hasher",
 	})
 	return b.String(), err
@@ -87,7 +91,7 @@ func isNullable(options []*descriptor.UninterpretedOption) bool {
 	return false
 }
 
-func (fns goSharedFuncs) renderMap(field pgs.Field, nullable bool) (string, error) {
+func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
 	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", "innerHash")
@@ -99,7 +103,7 @@ func (fns goSharedFuncs) renderMap(field pgs.Field, nullable bool) (string, erro
 		return "", err
 	}
 	values := Value{
-		Name:   fns.accessor(field, nullable),
+		Name:   fns.accessor(field),
 		Hasher: "innerHash",
 		InnerTemplates: struct {
 			Key   string
@@ -111,14 +115,14 @@ func (fns goSharedFuncs) renderMap(field pgs.Field, nullable bool) (string, erro
 	return b.String(), err
 }
 
-func (fns goSharedFuncs) renderRepeated(field pgs.Field, nullable bool) (string, error) {
+func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 	var b bytes.Buffer
 	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", "hasher")
 	if err != nil {
 		return "", err
 	}
 	values := Value{
-		Name:   fns.accessor(field, nullable),
+		Name:   fns.accessor(field),
 		Hasher: "innerHash",
 		InnerTemplates: struct {
 			Key   string
