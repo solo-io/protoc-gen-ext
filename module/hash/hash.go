@@ -3,7 +3,8 @@ package hash
 import (
 	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
-	"github.com/solo-io/protoc-gen-ext/ext"
+	"github.com/solo-io/protoc-gen-ext/extproto"
+	_ "github.com/solo-io/protoc-gen-ext/extproto/gogoproto"
 	"github.com/solo-io/protoc-gen-ext/templates"
 )
 
@@ -31,7 +32,7 @@ func (m *HashModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Pa
 
 	for _, f := range targets {
 		var hashAll bool
-		_, err := f.Extension(ext.E_HashAll, &hashAll)
+		_, err := f.Extension(extproto.E_HashAll, &hashAll)
 		if err != nil {
 			m.Debugf("error getting hash extension, %s", err.Error())
 			continue

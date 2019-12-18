@@ -1,7 +1,7 @@
 syntax = "proto2";
-package ext;
+package extproto;
 
-option go_package = "github.com/solo-io/protoc-gen-ext/ext";
+option go_package = "github.com/solo-io/protoc-gen-ext/extproto";
 
 import "google/protobuf/descriptor.proto";
 

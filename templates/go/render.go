@@ -7,13 +7,13 @@ import (
 
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	pgs "github.com/lyft/protoc-gen-star"
-	"github.com/solo-io/protoc-gen-ext/ext"
+	"github.com/solo-io/protoc-gen-ext/extproto"
+	"github.com/solo-io/protoc-gen-ext/extproto/gogoproto"
 )
 
 type Value struct {
 	Name           string
 	Hasher         string
-	Nullable       string
 	InnerTemplates struct {
 		Key   string
 		Value string
@@ -22,11 +22,10 @@ type Value struct {
 
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
-	var nullable string
 
 	// check if skip hash is set on a given field
 	var skipHash bool
-	_, err := field.Extension(ext.E_SkipHashing, &skipHash)
+	_, err := field.Extension(extproto.E_SkipHashing, &skipHash)
 	if err != nil {
 		return "", err
 	}
@@ -34,6 +33,16 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		return "", nil
 	}
 
+	// ok isn't used, the value isn't set.
+	var gogoNullable bool
+	ok, err := field.Extension(gogoproto.E_Nullable, &gogoNullable)
+	if err != nil {
+		return "", err
+	}
+	// If ok and gogoNullable is false, then we need to render name differently
+	renderPointerName := ok && !gogoNullable
+
+	name := fns.accessor(field)
 	if field.Type().ProtoType().IsNumeric() ||
 		field.Type().ProtoType() == pgs.BoolT ||
 		field.Type().IsEnum() {
@@ -50,6 +59,9 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
+			if renderPointerName {
+				name = fns.pointerAccessor(field)
+			}
 			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 		default:
 			return "", errors.New("unknown type")
@@ -58,9 +70,8 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
 	err = tpl.Execute(&b, Value{
-		Name:     fns.accessor(field),
+		Name:     name,
 		Hasher:   "hasher",
-		Nullable: nullable,
 	})
 	return b.String(), err
 }

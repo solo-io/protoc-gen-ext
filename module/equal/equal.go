@@ -4,7 +4,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
-	"github.com/solo-io/protoc-gen-ext/ext"
+	"github.com/solo-io/protoc-gen-ext/extproto"
 	"github.com/solo-io/protoc-gen-ext/templates"
 )
 
@@ -30,7 +30,7 @@ func (m *EqualModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.P
 	// Process file-level templates
 	tpl := templates.Template(m.Parameters())
 	for _, f := range targets {
-		extension, err := proto.GetExtension(f.Descriptor(), ext.E_EqualAll)
+		extension, err := proto.GetExtension(f.Descriptor(), extproto.E_EqualAll)
 		if err != nil {
 			continue
 		}
