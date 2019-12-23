@@ -27,6 +27,7 @@ init:
 empty :=
 space := $(empty) $(empty)
 PACKAGE := github.com/solo-io/protoc-gen-ext
+GOGO_OUTPUT := github.com/gogo/protobuf/gogoproto/*
 
 # protoc-gen-go parameters for properly generating the import path for PGV
 EXT_IMPORT := Mhash/hash.proto=${PACKAGE}/ext
@@ -44,7 +45,9 @@ PHONE: generated-code
 generated-code:
 	protoc -I=. --go_out="${EXT_IMPORT}:." extproto/ext.proto
 	protoc -I=. --go_out="${EXT_IMPORT}:." extproto/gogoproto/gogo.proto
-	cp -r ${PACKAGE}/extproto/ extproto; rm -rf github.com
+	cp -r ${PACKAGE}/extproto/ extproto
+	cp -r ${GOGO_OUTPUT} extproto/gogoproto
+	rm -rf github.com
 	protoc -I=. -I=./vendor/github.com/gogo/protobuf --go_out="." --ext_out="."  tests/api/hello.proto
 
 
