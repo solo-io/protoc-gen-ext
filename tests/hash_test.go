@@ -174,6 +174,25 @@ var _ = Describe("hash", func() {
 			}
 		})
 	})
+	Context("oneof", func() {
+		It("will treat empty oneof objects differently", func() {
+			objectWithEmpty := &api.Nested{
+				TestOneOf: &api.Nested_EmptyOneOf{
+					EmptyOneOf: &api.Empty{},
+				},
+			}
+			objectWithNested := &api.Nested{
+				TestOneOf: &api.Nested_NestedOneOf{
+					NestedOneOf: &api.NestedEmpty{},
+				},
+			}
+			hash1, err := objectWithEmpty.Hash(nil)
+			Expect(err).NotTo(HaveOccurred())
+			hash2, err := objectWithNested.Hash(nil)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(hash1).NotTo(Equal(hash2))
+		})
+	})
 })
 
 func allDifferent(hashes []uint64) bool {

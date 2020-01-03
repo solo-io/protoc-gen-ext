@@ -34,6 +34,9 @@ func (m *Simple) Hash(hasher hash.Hash64) (uint64, error) {
 		hasher = fnv.New64()
 	}
 	var err error
+	if _, err = hasher.Write([]byte("envoy.type.tests/api.Simple")); err != nil {
+		return 0, err
+	}
 
 	if _, err = hasher.Write([]byte(m.GetStr())); err != nil {
 		return 0, err
@@ -120,6 +123,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 		hasher = fnv.New64()
 	}
 	var err error
+	if _, err = hasher.Write([]byte("envoy.type.tests/api.Nested")); err != nil {
+		return 0, err
+	}
 
 	if h, ok := interface{}(m.GetSimple()).(safe_hasher.SafeHasher); ok {
 		if _, err = h.Hash(hasher); err != nil {
@@ -241,6 +247,42 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 		}
 	}
 
+	switch m.TestOneOf.(type) {
+
+	case *Nested_EmptyOneOf:
+
+		if h, ok := interface{}(m.GetEmptyOneOf()).(safe_hasher.SafeHasher); ok {
+			if _, err = h.Hash(hasher); err != nil {
+				return 0, err
+			}
+		} else {
+			if val, err := hashstructure.Hash(m.GetEmptyOneOf(), nil); err != nil {
+				return 0, err
+			} else {
+				if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+					return 0, err
+				}
+			}
+		}
+
+	case *Nested_NestedOneOf:
+
+		if h, ok := interface{}(m.GetNestedOneOf()).(safe_hasher.SafeHasher); ok {
+			if _, err = h.Hash(hasher); err != nil {
+				return 0, err
+			}
+		} else {
+			if val, err := hashstructure.Hash(m.GetNestedOneOf(), nil); err != nil {
+				return 0, err
+			} else {
+				if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+					return 0, err
+				}
+			}
+		}
+
+	}
+
 	return hasher.Sum64(), nil
 }
 
@@ -251,6 +293,40 @@ func (m *Empty) Hash(hasher hash.Hash64) (uint64, error) {
 	}
 	if hasher == nil {
 		hasher = fnv.New64()
+	}
+	var err error
+	if _, err = hasher.Write([]byte("envoy.type.tests/api.Empty")); err != nil {
+		return 0, err
+	}
+
+	return hasher.Sum64(), nil
+}
+
+// Hash function
+func (m *NestedEmpty) Hash(hasher hash.Hash64) (uint64, error) {
+	if m == nil {
+		return 0, nil
+	}
+	if hasher == nil {
+		hasher = fnv.New64()
+	}
+	var err error
+	if _, err = hasher.Write([]byte("envoy.type.tests/api.NestedEmpty")); err != nil {
+		return 0, err
+	}
+
+	if h, ok := interface{}(m.GetNested()).(safe_hasher.SafeHasher); ok {
+		if _, err = h.Hash(hasher); err != nil {
+			return 0, err
+		}
+	} else {
+		if val, err := hashstructure.Hash(m.GetNested(), nil); err != nil {
+			return 0, err
+		} else {
+			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+				return 0, err
+			}
+		}
 	}
 
 	return hasher.Sum64(), nil

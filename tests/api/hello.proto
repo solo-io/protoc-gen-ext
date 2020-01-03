@@ -57,8 +57,17 @@ message Nested {
     map<string, Simple> initial = 9;
 
     Empty emptyNonNullable = 10 [(gogoproto.nullable) = false];
+
+    oneof test_one_of {
+        Empty empty_one_of = 11;
+        NestedEmpty nested_one_of = 12;
+    }
 }
 
 
 message Empty {
+}
+
+message NestedEmpty {
+    Nested nested = 1;
 }
