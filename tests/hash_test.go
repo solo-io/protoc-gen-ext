@@ -186,13 +186,11 @@ var _ = Describe("hash", func() {
 					NestedOneOf: &api.NestedEmpty{},
 				},
 			}
-			for i := 0; i < 10000; i++ {
-				hash1, err := objectWithEmpty.Hash(nil)
-				Expect(err).NotTo(HaveOccurred())
-				hash2, err := objectWithNested.Hash(nil)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(hash1).NotTo(Equal(hash2))
-			}
+			hash1, err := objectWithEmpty.Hash(nil)
+			Expect(err).NotTo(HaveOccurred())
+			hash2, err := objectWithNested.Hash(nil)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(hash1).NotTo(Equal(hash2))
 		})
 	})
 })
