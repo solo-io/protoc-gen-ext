@@ -5,9 +5,11 @@ const msgTpl = `
 func (m {{ (msgTyp .).Pointer }}) Hash(hasher hash.Hash64) (uint64, error) {
 		if m == nil { return 0, nil }
 		if hasher == nil { hasher = fnv.New64() }
-		{{- if not (eq (len .Fields) 0) }}
 		var err error
-		{{- end }}
+		if _, err = hasher.Write([]byte("{{ fullPackageName . }}")); err != nil { 
+			return 0, err 
+		}
+
 		{{ range .NonOneOfFields }}
 			{{ render . }}
 		{{ end }}

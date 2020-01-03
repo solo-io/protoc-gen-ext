@@ -18,19 +18,20 @@ func register(tpl *template.Template, params pgs.Parameters) {
 	}
 
 	tpl.Funcs(map[string]interface{}{
-		"snakeCase":     fns.snakeCase,
-		"cmt":           pgs.C80,
-		"isBytes":       fns.isBytes,
-		"lit":           fns.lit,
-		"lookup":        fns.lookup,
-		"msgTyp":        fns.msgTyp,
-		"name":          fns.Name,
-		"oneof":         fns.oneofTypeName,
-		"pkg":           fns.PackageName,
-		"typ":           fns.Type,
-		"externalEnums": fns.externalEnums,
-		"enumPackages":  fns.enumPackages,
-		"render":        fns.render,
+		"fullPackageName": fns.fullPackageName,
+		"snakeCase":       fns.snakeCase,
+		"cmt":             pgs.C80,
+		"isBytes":         fns.isBytes,
+		"lit":             fns.lit,
+		"lookup":          fns.lookup,
+		"msgTyp":          fns.msgTyp,
+		"name":            fns.Name,
+		"oneof":           fns.oneofTypeName,
+		"pkg":             fns.PackageName,
+		"typ":             fns.Type,
+		"externalEnums":   fns.externalEnums,
+		"enumPackages":    fns.enumPackages,
+		"render":          fns.render,
 	})
 }
 
@@ -45,6 +46,10 @@ func (fns goSharedFuncs) accessor(field pgs.Field) string {
 
 func (fns goSharedFuncs) pointerAccessor(field pgs.Field) string {
 	return fmt.Sprintf("&m.%s", fns.Name(field))
+}
+
+func (fns goSharedFuncs) fullPackageName(msg pgs.Message) string {
+	return fmt.Sprintf("%s.%s.%s", msg.Package().ProtoName(), fns.ImportPath(msg), fns.Name(msg))
 }
 
 func (fns goSharedFuncs) lookup(f pgs.Field, name string) string {
@@ -101,7 +106,6 @@ func (fns goSharedFuncs) byteStr(x []byte) string {
 func (fns goSharedFuncs) oneofTypeName(f pgs.Field) pgsgo.TypeName {
 	return pgsgo.TypeName(fns.OneofOption(f)).Pointer()
 }
-
 
 func (fns goSharedFuncs) msgTyp(message pgs.Message) pgsgo.TypeName {
 	return pgsgo.TypeName(fns.Name(message))
