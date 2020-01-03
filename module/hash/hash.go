@@ -41,7 +41,6 @@ func (m *HashModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Pa
 			m.Debugf("Skipping hash functions for %s", f.Name())
 			continue
 		}
-		f.AllMessages()
 		m.Push(f.Name().String())
 		out := templates.FilePathFor(tpl, hasherName)(f, m.ctx, tpl)
 		if out != nil {
