@@ -6,6 +6,7 @@ import (
 	"github.com/solo-io/protoc-gen-ext/extproto"
 	_ "github.com/solo-io/protoc-gen-ext/extproto/gogoproto"
 	"github.com/solo-io/protoc-gen-ext/templates"
+	"github.com/solo-io/protoc-gen-ext/templates/hash"
 )
 
 const (
@@ -28,7 +29,7 @@ func (m *HashModule) Name() string { return hasherName }
 
 func (m *HashModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
 	// Process file-level templates
-	tpl := templates.Template(m.Parameters())
+	tpl := templates.Template(m.Parameters(), hash.Register)
 
 	for _, f := range targets {
 		var hashAll bool

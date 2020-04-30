@@ -6,6 +6,7 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"github.com/solo-io/protoc-gen-ext/extproto"
 	"github.com/solo-io/protoc-gen-ext/templates"
+	"github.com/solo-io/protoc-gen-ext/templates/hash"
 )
 
 const (
@@ -28,7 +29,7 @@ func (m *EqualModule) Name() string { return equalName }
 
 func (m *EqualModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
 	// Process file-level templates
-	tpl := templates.Template(m.Parameters())
+	tpl := templates.Template(m.Parameters(), hash.Register) // TODO: create equal.Register
 	for _, f := range targets {
 		extension, err := proto.GetExtension(f.Descriptor(), extproto.E_EqualAll)
 		if err != nil {

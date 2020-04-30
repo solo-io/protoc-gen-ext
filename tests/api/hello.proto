@@ -6,6 +6,7 @@ import "google/protobuf/struct.proto";
 import "gogoproto/gogo.proto";
 import "extproto/ext.proto";
 option (extproto.hash_all) = true;
+option (extproto.merge_all) = true;
 
 option go_package = "api";
 
