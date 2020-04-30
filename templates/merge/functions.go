@@ -45,9 +45,9 @@ func (fns goSharedFuncs) renderField(field pgs.Field) (string, error) {
 
 	fieldName := field.Name().UpperCamelCase().String()
 
-	mergeField := `m.` + fieldName + ` = m2.` + fieldName + ` `
+	mergeField := `m.` + fieldName + ` = overrides.` + fieldName + ` `
 
-	mergeNullableField := `if m2.` + fieldName + ` != nil {` + mergeField + ` }`
+	mergeNullableField := `if overrides.` + fieldName + ` != nil {` + mergeField + ` }`
 
 	if field.Type().ProtoType() == pgs.MessageT {
 		return mergeNullableField, nil
@@ -70,7 +70,7 @@ func (fns goSharedFuncs) renderOneOf(oneof pgs.OneOf) (string, error) {
 
 	fieldName := oneof.Name().UpperCamelCase().String()
 
-	mergeField := `m.` + fieldName + ` = m2.` + fieldName + ` `
+	mergeField := `m.` + fieldName + ` = overrides.` + fieldName + ` `
 
-	return `if m2.` + fieldName + ` != nil {` + mergeField + ` }`, nil
+	return `if overrides.` + fieldName + ` != nil {` + mergeField + ` }`, nil
 }
