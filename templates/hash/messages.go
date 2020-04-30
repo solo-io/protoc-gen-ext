@@ -1,4 +1,4 @@
-package golang
+package hash
 
 const messageTpl = `
 		if h, ok := interface{}({{ .Name }}).(safe_hasher.SafeHasher); ok {

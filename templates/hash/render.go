@@ -1,4 +1,4 @@
-package golang
+package hash
 
 import (
 	"bytes"
@@ -70,8 +70,8 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
 	err = tpl.Execute(&b, Value{
-		Name:     name,
-		Hasher:   "hasher",
+		Name:   name,
+		Hasher: "hasher",
 	})
 	return b.String(), err
 }

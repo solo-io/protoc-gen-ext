@@ -5,9 +5,10 @@ package gogoproto
 
 import (
 	fmt "fmt"
+	math "math"
+
 	proto "github.com/golang/protobuf/proto"
 	descriptor "github.com/golang/protobuf/protoc-gen-go/descriptor"
-	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -784,7 +785,9 @@ func init() {
 	proto.RegisterExtension(E_Wktpointer)
 }
 
-func init() { proto.RegisterFile("extproto/gogoproto/gogo.proto", fileDescriptor_50464b211da36e87) }
+func init() {
+	proto.RegisterFile("extproto/gogoproto/gogo.proto", fileDescriptor_50464b211da36e87)
+}
 
 var fileDescriptor_50464b211da36e87 = []byte{
 	// 1322 bytes of a gzipped FileDescriptorProto

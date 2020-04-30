@@ -12,6 +12,10 @@ extend google.protobuf.FileOptions {
     optional bool hash_all = 10071;
 
     optional bool equal_all = 10072;
+
+    // enabling merge_all for a file will generate a Merge(m) method for all Messages in the file.
+    // Merge(m) will replace non-nil fields from a Proto passed as an override.
+    optional bool merge_all = 10073;
 }
 
 // Validation rules applied at the field level
@@ -19,4 +23,13 @@ extend google.protobuf.FieldOptions {
     // Rules specify the validations to be performed on this field. By default,
     // no validation is performed against a field.
     optional bool skip_hashing = 10071;
+
+    // This field will not be merged when a message's Merge() method is called.
+    optional bool skip_merging = 10072;
+}
+
+// Validation rules applied at the field level
+extend google.protobuf.OneofOptions {
+    // The fields in this oneof will not be merged when a message's Merge() method is called.
+    optional bool skip_merging_oneof = 10072;
 }

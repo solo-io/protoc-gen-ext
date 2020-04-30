@@ -1,4 +1,4 @@
-package golang
+package hash
 
 const msgTpl = `
 // Hash function
