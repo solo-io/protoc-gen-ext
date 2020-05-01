@@ -1,9 +1,9 @@
 package merge
 
 const msgTpl = `
-// Merge non-nil fields from m2 into m
+// Merge non-nil fields from overrides into m
 func (m {{ (msgTyp .).Pointer }}) Merge(overrides {{ (msgTyp .).Pointer }}) {
-	if m == nil || m2 == nil { return }
+	if m == nil || overrides == nil { return }
 
 	{{ range .NonOneOfFields }}
 		{{ renderField . }}
