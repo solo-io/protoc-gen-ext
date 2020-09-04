@@ -1,12 +1,11 @@
 package equal
 
 import (
-	"github.com/golang/protobuf/proto"
 	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"github.com/solo-io/protoc-gen-ext/extproto"
 	"github.com/solo-io/protoc-gen-ext/templates"
-	"github.com/solo-io/protoc-gen-ext/templates/hash"
+	"github.com/solo-io/protoc-gen-ext/templates/equal"
 )
 
 const (
@@ -29,14 +28,16 @@ func (m *EqualModule) Name() string { return equalName }
 
 func (m *EqualModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
 	// Process file-level templates
-	tpl := templates.Template(m.Parameters(), hash.Register) // TODO: create equal.Register
+	tpl := templates.Template(m.Parameters(), equal.Register)
 	for _, f := range targets {
-		extension, err := proto.GetExtension(f.Descriptor(), extproto.E_EqualAll)
+		var equalAll bool
+		_, err := f.Extension(extproto.E_EqualAll, &equalAll)
 		if err != nil {
+			m.Debugf("error getting equal extension, %s", err.Error())
 			continue
 		}
-		hashAll, _ := extension.(bool)
-		if !hashAll {
+		if !equalAll {
+			m.Debugf("Skipping equal functions for %s", f.Name())
 			continue
 		}
 		m.Push(f.Name().String())
