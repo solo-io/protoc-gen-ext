@@ -221,6 +221,17 @@ func (m *Nested) Equal(that interface{}) bool {
 
 	}
 
+	if len(m.GetSimpleMap()) != len(target.GetSimpleMap()) {
+		return false
+	}
+	for k, v := range m.GetSimpleMap() {
+
+		if strings.Compare(v, target.GetSimpleMap()[k]) != 0 {
+			return false
+		}
+
+	}
+
 	switch m.TestOneOf.(type) {
 
 	case *Nested_EmptyOneOf:

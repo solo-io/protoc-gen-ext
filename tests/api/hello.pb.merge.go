@@ -79,6 +79,10 @@ func (m *Nested) Merge(overrides *Nested) {
 		m.Initial = overrides.Initial
 	}
 
+	if overrides.SimpleMap != nil {
+		m.SimpleMap = overrides.SimpleMap
+	}
+
 	if overrides.TestOneOf != nil {
 		m.TestOneOf = overrides.TestOneOf
 	}

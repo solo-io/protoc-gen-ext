@@ -57,6 +57,8 @@ message Nested {
 
     map<string, Simple> initial = 9;
 
+    map<string, string> simple_map = 10;
+
     oneof test_one_of {
         Empty empty_one_of = 11;
         NestedEmpty nested_one_of = 12;
