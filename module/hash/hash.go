@@ -4,7 +4,6 @@ import (
 	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"github.com/solo-io/protoc-gen-ext/extproto"
-	_ "github.com/solo-io/protoc-gen-ext/extproto/gogoproto"
 	"github.com/solo-io/protoc-gen-ext/templates"
 	"github.com/solo-io/protoc-gen-ext/templates/hash"
 )

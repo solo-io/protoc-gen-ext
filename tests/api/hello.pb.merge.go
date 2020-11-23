@@ -3,9 +3,9 @@
 
 package api
 
-// Merge non-nil fields from m2 into m
+// Merge non-nil fields from overrides into m
 func (m *Simple) Merge(overrides *Simple) {
-	if m == nil || m2 == nil {
+	if m == nil || overrides == nil {
 		return
 	}
 
@@ -45,9 +45,9 @@ func (m *Simple) Merge(overrides *Simple) {
 
 }
 
-// Merge non-nil fields from m2 into m
+// Merge non-nil fields from overrides into m
 func (m *Nested) Merge(overrides *Nested) {
-	if m == nil || m2 == nil {
+	if m == nil || overrides == nil {
 		return
 	}
 
@@ -79,8 +79,8 @@ func (m *Nested) Merge(overrides *Nested) {
 		m.Initial = overrides.Initial
 	}
 
-	if overrides.EmptyNonNullable != nil {
-		m.EmptyNonNullable = overrides.EmptyNonNullable
+	if overrides.SimpleMap != nil {
+		m.SimpleMap = overrides.SimpleMap
 	}
 
 	if overrides.TestOneOf != nil {
@@ -89,17 +89,17 @@ func (m *Nested) Merge(overrides *Nested) {
 
 }
 
-// Merge non-nil fields from m2 into m
+// Merge non-nil fields from overrides into m
 func (m *Empty) Merge(overrides *Empty) {
-	if m == nil || m2 == nil {
+	if m == nil || overrides == nil {
 		return
 	}
 
 }
 
-// Merge non-nil fields from m2 into m
+// Merge non-nil fields from overrides into m
 func (m *NestedEmpty) Merge(overrides *NestedEmpty) {
-	if m == nil || m2 == nil {
+	if m == nil || overrides == nil {
 		return
 	}
 

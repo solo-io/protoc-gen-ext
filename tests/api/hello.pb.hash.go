@@ -34,7 +34,7 @@ func (m *Simple) Hash(hasher hash.Hash64) (uint64, error) {
 		hasher = fnv.New64()
 	}
 	var err error
-	if _, err = hasher.Write([]byte("envoy.type.tests/api.Simple")); err != nil {
+	if _, err = hasher.Write([]byte("envoy.type.github.com/solo-io/protoc-gen-ext/tests/api.Simple")); err != nil {
 		return 0, err
 	}
 
@@ -123,7 +123,7 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 		hasher = fnv.New64()
 	}
 	var err error
-	if _, err = hasher.Write([]byte("envoy.type.tests/api.Nested")); err != nil {
+	if _, err = hasher.Write([]byte("envoy.type.github.com/solo-io/protoc-gen-ext/tests/api.Nested")); err != nil {
 		return 0, err
 	}
 
@@ -233,18 +233,27 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 
 	}
 
-	if h, ok := interface{}(&m.EmptyNonNullable).(safe_hasher.SafeHasher); ok {
-		if _, err = h.Hash(hasher); err != nil {
-			return 0, err
-		}
-	} else {
-		if val, err := hashstructure.Hash(&m.EmptyNonNullable, nil); err != nil {
-			return 0, err
-		} else {
-			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+	{
+		var result uint64
+		innerHash := fnv.New64()
+		for k, v := range m.GetSimpleMap() {
+			innerHash.Reset()
+
+			if _, err = innerHash.Write([]byte(v)); err != nil {
 				return 0, err
 			}
+
+			if _, err = innerHash.Write([]byte(k)); err != nil {
+				return 0, err
+			}
+
+			result = result ^ innerHash.Sum64()
 		}
+		err = binary.Write(hasher, binary.LittleEndian, result)
+		if err != nil {
+			return 0, err
+		}
+
 	}
 
 	switch m.TestOneOf.(type) {
@@ -295,7 +304,7 @@ func (m *Empty) Hash(hasher hash.Hash64) (uint64, error) {
 		hasher = fnv.New64()
 	}
 	var err error
-	if _, err = hasher.Write([]byte("envoy.type.tests/api.Empty")); err != nil {
+	if _, err = hasher.Write([]byte("envoy.type.github.com/solo-io/protoc-gen-ext/tests/api.Empty")); err != nil {
 		return 0, err
 	}
 
@@ -311,7 +320,7 @@ func (m *NestedEmpty) Hash(hasher hash.Hash64) (uint64, error) {
 		hasher = fnv.New64()
 	}
 	var err error
-	if _, err = hasher.Write([]byte("envoy.type.tests/api.NestedEmpty")); err != nil {
+	if _, err = hasher.Write([]byte("envoy.type.github.com/solo-io/protoc-gen-ext/tests/api.NestedEmpty")); err != nil {
 		return 0, err
 	}
 
