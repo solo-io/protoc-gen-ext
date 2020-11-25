@@ -8,6 +8,8 @@ if [ ! -f .gitignore ]; then
   echo "_output" > .gitignore
 fi
 
+make install-go-tools
+
 set +e
 
 make generated-code -B > /dev/null

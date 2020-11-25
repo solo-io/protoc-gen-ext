@@ -62,7 +62,7 @@ install-go-tools:
 	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo
 
 .PHONY: run-tests
-run-tests:
+run-tests: install-go-tools
 	$(DEPSGOBIN)/ginkgo -r -failFast -trace -progress -race -compilers=4 -failOnPending -noColor $(TEST_PKG)
 
 $(EXEC_NAME):
