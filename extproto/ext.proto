@@ -26,6 +26,9 @@ extend google.protobuf.FieldOptions {
 
     // This field will not be merged when a message's Merge() method is called.
     optional bool skip_merging = 10072;
+
+    // This field will not be merged when a message's Merge() method is called.
+    optional bool sensitive = 10073;
 }
 
 // Validation rules applied at the field level
