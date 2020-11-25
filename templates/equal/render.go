@@ -51,7 +51,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 	var b bytes.Buffer
-	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", fns.targetAccessor(field) + "[k]")
+	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", fns.targetAccessor(field)+"[k]")
 	if err != nil {
 		return "", err
 	}
@@ -69,7 +69,7 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 
 func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 	var b bytes.Buffer
-	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", fns.targetAccessor(field) + "[idx]")
+	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", fns.targetAccessor(field)+"[idx]")
 	if err != nil {
 		return "", err
 	}

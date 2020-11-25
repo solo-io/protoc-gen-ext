@@ -12,7 +12,6 @@ func Redact(m protoreflect.Message) {
 	m.Range(func(fd protoreflect.FieldDescriptor, v protoreflect.Value) bool {
 		opts := fd.Options().(*descriptorpb.FieldOptions)
 
-
 		switch typed := v.Interface().(type) {
 		case protoreflect.Message:
 			Redact(typed)

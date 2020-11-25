@@ -43,13 +43,27 @@ GO_IMPORT:=$(subst $(space),,$(GO_IMPORT_SPACES))
 
 PHONE: generated-code
 generated-code:
-	protoc -I=. --go_out="${EXT_IMPORT}:." extproto/ext.proto
-	cp -r ${PACKAGE}/extproto/ extproto
-	protoc -I=. -I=./extproto --go_out="." --ext_out="."  tests/api/hello.proto
-	cp -r ${PACKAGE}/tests/api/ tests/api
-	rm -rf github.com
+	PATH=$(DEPSGOBIN):$$PATH protoc -I=. --go_out="${EXT_IMPORT}:." extproto/ext.proto
+	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/extproto/ extproto
+	PATH=$(DEPSGOBIN):$$PATH protoc -I=. -I=./extproto --go_out="." --ext_out="."  tests/api/hello.proto
+	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/tests/api/ tests/api
+	PATH=$(DEPSGOBIN):$$PATH rm -rf github.com
+	PATH=$(DEPSGOBIN):$$PATH goimports -w .
 
 
+DEPSGOBIN=$(shell pwd)/_output/.bin
+
+# https://github.com/go-modules-by-example/index/blob/master/010_tools/README.md
+.PHONY: install-go-tools
+install-go-tools: install
+	mkdir -p $(DEPSGOBIN)
+	GOBIN=$(DEPSGOBIN) go install github.com/golang/protobuf/protoc-gen-go
+	GOBIN=$(DEPSGOBIN) go install golang.org/x/tools/cmd/goimports
+	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo
+
+.PHONY: run-tests
+run-tests: install-go-tools
+	$(DEPSGOBIN)/ginkgo -r -failFast -trace -progress -race -compilers=4 -failOnPending -noColor $(TEST_PKG)
 
 $(EXEC_NAME):
 	$(GO_BUILD_FLAGS) go build -o $@ main.go

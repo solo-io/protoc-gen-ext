@@ -42,7 +42,7 @@ var _ = Describe("Redaction", func() {
 
 	It("Will clear a redacted message", func() {
 		obj := &api.Nested{
-			Test: api.Test_WORLD,
+			Test:  api.Test_WORLD,
 			Empty: &api.Empty{},
 		}
 
