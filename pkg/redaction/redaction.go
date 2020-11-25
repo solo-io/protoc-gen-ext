@@ -12,6 +12,7 @@ func Redact(m protoreflect.Message) {
 	m.Range(func(fd protoreflect.FieldDescriptor, v protoreflect.Value) bool {
 		opts := fd.Options().(*descriptorpb.FieldOptions)
 
+
 		switch typed := v.Interface().(type) {
 		case protoreflect.Message:
 			Redact(typed)
@@ -33,19 +34,22 @@ func Redact(m protoreflect.Message) {
 			}
 		}
 
+		// Get extension from field
 		ext, err := proto.GetExtension(opts, extproto.E_Sensitive)
 		if err != nil {
 			return true
 		}
-
+		// Check if equal to bool as expected
 		extVal, ok := ext.(*bool)
 		if !ok {
 			return true
 		}
 
-		if extVal!= nil && *extVal == true {
+		// If true clear field and move on
+		if extVal != nil && *extVal == true {
 			m.Clear(fd)
 		}
+
 		return true
 	})
 }

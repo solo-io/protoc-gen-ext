@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/gogo/protobuf v1.3.1
-	github.com/golang/protobuf v1.4.2
+	github.com/golang/protobuf v1.4.3
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/lyft/protoc-gen-star v0.5.1
 	github.com/mitchellh/hashstructure v1.0.0
