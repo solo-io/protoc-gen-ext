@@ -14,7 +14,7 @@ option go_package = "github.com/solo-io/protoc-gen-ext/tests/api";
 // proto object to test all base objects
 message Simple {
     string str = 1;
-    bytes byt = 2;
+    bytes byt = 2 [(extproto.sensitive) = true];
     uint32 testUint32 = 3;
     uint64 testUint64 = 4;
     bool testBool = 5;
@@ -47,17 +47,17 @@ message Nested {
 
     Test test = 2;
 
-    Empty empty = 3;
+    Empty empty = 3 [(extproto.sensitive) = true];
 
     repeated string hello = 4;
 
     Simple skipper = 6 [(extproto.skip_hashing) = true];
 
-    repeated Simple x = 7;
+    repeated Simple x = 7 [(extproto.sensitive) = true];
 
     map<string, Simple> initial = 9;
 
-    map<string, string> simple_map = 10;
+    map<string, string> simple_map = 10 [(extproto.sensitive) = true];
 
     oneof test_one_of {
         Empty empty_one_of = 11;
