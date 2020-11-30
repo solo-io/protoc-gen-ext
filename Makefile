@@ -80,4 +80,4 @@ build: $(EXEC_NAME)
 
 PHONY: install
 install:
-	$(GO_BUILD_FLAGS) go install .
+	GOBIN=$(DEPSGOBIN) $(GO_BUILD_FLAGS) go install .
