@@ -43,13 +43,14 @@ enum Test {
 message Nested {
     Simple simple = 1;
 
-    google.protobuf.Struct details = 5;
 
     Test test = 2;
 
     Empty empty = 3 [(extproto.sensitive) = true];
 
     repeated string hello = 4;
+
+    google.protobuf.Struct details = 5;
 
     Simple skipper = 6 [(extproto.skip_hashing) = true];
 
@@ -63,6 +64,8 @@ message Nested {
         Empty empty_one_of = 11;
         NestedEmpty nested_one_of = 12;
     }
+
+    repeated uint64 repeated_primitive = 13;
 }
 
 

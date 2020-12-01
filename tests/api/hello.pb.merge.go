@@ -55,10 +55,6 @@ func (m *Nested) Merge(overrides *Nested) {
 		m.Simple = overrides.Simple
 	}
 
-	if overrides.Details != nil {
-		m.Details = overrides.Details
-	}
-
 	m.Test = overrides.Test
 
 	if overrides.Empty != nil {
@@ -66,6 +62,10 @@ func (m *Nested) Merge(overrides *Nested) {
 	}
 
 	m.Hello = overrides.Hello
+
+	if overrides.Details != nil {
+		m.Details = overrides.Details
+	}
 
 	if overrides.Skipper != nil {
 		m.Skipper = overrides.Skipper
@@ -82,6 +82,8 @@ func (m *Nested) Merge(overrides *Nested) {
 	if overrides.SimpleMap != nil {
 		m.SimpleMap = overrides.SimpleMap
 	}
+
+	m.RepeatedPrimitive = overrides.RepeatedPrimitive
 
 	if overrides.TestOneOf != nil {
 		m.TestOneOf = overrides.TestOneOf
