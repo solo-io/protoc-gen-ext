@@ -141,20 +141,6 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 		}
 	}
 
-	if h, ok := interface{}(m.GetDetails()).(safe_hasher.SafeHasher); ok {
-		if _, err = h.Hash(hasher); err != nil {
-			return 0, err
-		}
-	} else {
-		if val, err := hashstructure.Hash(m.GetDetails(), nil); err != nil {
-			return 0, err
-		} else {
-			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
-				return 0, err
-			}
-		}
-	}
-
 	err = binary.Write(hasher, binary.LittleEndian, m.GetTest())
 	if err != nil {
 		return 0, err
@@ -180,6 +166,20 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			return 0, err
 		}
 
+	}
+
+	if h, ok := interface{}(m.GetDetails()).(safe_hasher.SafeHasher); ok {
+		if _, err = h.Hash(hasher); err != nil {
+			return 0, err
+		}
+	} else {
+		if val, err := hashstructure.Hash(m.GetDetails(), nil); err != nil {
+			return 0, err
+		} else {
+			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+				return 0, err
+			}
+		}
 	}
 
 	for _, v := range m.GetX() {
@@ -254,6 +254,11 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			return 0, err
 		}
 
+	}
+
+	err = binary.Write(hasher, binary.LittleEndian, m.GetRepeatedPrimitive())
+	if err != nil {
+		return 0, err
 	}
 
 	switch m.TestOneOf.(type) {

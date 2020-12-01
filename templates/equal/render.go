@@ -19,15 +19,15 @@ type Value struct {
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
 
-	if field.Type().ProtoType().IsNumeric() ||
+	if field.Type().IsRepeated() {
+		return fns.renderRepeated(field)
+	} else if field.Type().IsMap() {
+		return fns.renderMap(field)
+	} else if field.Type().ProtoType().IsNumeric() ||
 		field.Type().ProtoType() == pgs.BoolT ||
 		field.Type().IsEnum() {
 
 		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
-	} else if field.Type().IsMap() {
-		return fns.renderMap(field)
-	} else if field.Type().IsRepeated() {
-		return fns.renderRepeated(field)
 	} else {
 		switch field.Type().ProtoType() {
 		case pgs.BytesT:

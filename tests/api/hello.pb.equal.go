@@ -148,16 +148,6 @@ func (m *Nested) Equal(that interface{}) bool {
 		}
 	}
 
-	if h, ok := interface{}(m.GetDetails()).(equality.Equalizer); ok {
-		if !h.Equal(target.GetDetails()) {
-			return false
-		}
-	} else {
-		if !proto.Equal(m.GetDetails(), target.GetDetails()) {
-			return false
-		}
-	}
-
 	if m.GetTest() != target.GetTest() {
 		return false
 	}
@@ -181,6 +171,16 @@ func (m *Nested) Equal(that interface{}) bool {
 			return false
 		}
 
+	}
+
+	if h, ok := interface{}(m.GetDetails()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetDetails()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetDetails(), target.GetDetails()) {
+			return false
+		}
 	}
 
 	if h, ok := interface{}(m.GetSkipper()).(equality.Equalizer); ok {
@@ -233,6 +233,17 @@ func (m *Nested) Equal(that interface{}) bool {
 	for k, v := range m.GetSimpleMap() {
 
 		if strings.Compare(v, target.GetSimpleMap()[k]) != 0 {
+			return false
+		}
+
+	}
+
+	if len(m.GetRepeatedPrimitive()) != len(target.GetRepeatedPrimitive()) {
+		return false
+	}
+	for idx, v := range m.GetRepeatedPrimitive() {
+
+		if v != target.GetRepeatedPrimitive()[idx] {
 			return false
 		}
 
