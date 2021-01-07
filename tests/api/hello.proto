@@ -43,6 +43,7 @@ enum Test {
 message Nested {
     Simple simple = 1;
 
+    Simple other_simple = 14;
 
     Test test = 2;
 

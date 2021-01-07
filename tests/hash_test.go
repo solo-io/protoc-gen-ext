@@ -100,6 +100,7 @@ var _ = Describe("hash", func() {
 			}
 
 		})
+
 	})
 
 	Context("complex (nested)", func() {
@@ -173,7 +174,57 @@ var _ = Describe("hash", func() {
 				Expect(allDifferent(newHashes)).To(BeTrue())
 			}
 		})
+
+		It("can support objects with same values but different fields across many runs", func() {
+			testCases := []*api.Nested{
+				{
+					Simple: &api.Simple{
+						Str: "hello",
+						Byt: []byte("world"),
+					},
+					OtherSimple: nil,
+				},
+				{
+					Simple: nil,
+					OtherSimple: &api.Simple{
+						Str: "hello",
+						Byt: []byte("world"),
+					},
+				},
+				{
+					Simple: &api.Simple{
+						Str: "hello",
+						Byt: []byte("world"),
+					},
+					OtherSimple: &api.Simple{
+						Str: "hello",
+						Byt: []byte("world"),
+					},
+				},
+				{
+					Simple:      nil,
+					OtherSimple: nil,
+				},
+			}
+			hashes := make([]uint64, len(testCases))
+			for i, v := range testCases {
+				hash, err := v.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+				hashes[i] = hash
+			}
+			for idx := 0; idx < testRuns; idx++ {
+				newHashes := make([]uint64, len(testCases))
+				for i, v := range testCases {
+					hash, err := v.Hash(nil)
+					Expect(err).NotTo(HaveOccurred())
+					Expect(hash).To(Equal(hashes[i]))
+					newHashes[i] = hash
+				}
+				Expect(allDifferent(newHashes)).To(BeTrue())
+			}
+		})
 	})
+
 	Context("oneof", func() {
 		It("will treat empty oneof objects differently", func() {
 			objectWithEmpty := &api.Nested{
@@ -193,6 +244,7 @@ var _ = Describe("hash", func() {
 			Expect(hash1).NotTo(Equal(hash2))
 		})
 	})
+
 })
 
 func allDifferent(hashes []uint64) bool {

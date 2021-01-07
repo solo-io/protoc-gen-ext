@@ -148,6 +148,16 @@ func (m *Nested) Equal(that interface{}) bool {
 		}
 	}
 
+	if h, ok := interface{}(m.GetOtherSimple()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetOtherSimple()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetOtherSimple(), target.GetOtherSimple()) {
+			return false
+		}
+	}
+
 	if m.GetTest() != target.GetTest() {
 		return false
 	}
