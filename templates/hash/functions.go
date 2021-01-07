@@ -48,6 +48,10 @@ func (fns goSharedFuncs) pointerAccessor(field pgs.Field) string {
 	return fmt.Sprintf("&m.%s", fns.Name(field))
 }
 
+func (fns goSharedFuncs) fieldName(field pgs.Field) string {
+	return fmt.Sprintf("%s", fns.Name(field))
+}
+
 func (fns goSharedFuncs) fullPackageName(msg pgs.Message) string {
 	return fmt.Sprintf("%s.%s.%s", msg.Package().ProtoName(), fns.ImportPath(msg), fns.Name(msg))
 }

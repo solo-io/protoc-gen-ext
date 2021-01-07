@@ -10,7 +10,8 @@ import (
 )
 
 type Value struct {
-	Name           string
+	FieldAccessor  string
+	FieldName      string
 	Hasher         string
 	InnerTemplates struct {
 		Key   string
@@ -55,8 +56,9 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
 	err = tpl.Execute(&b, Value{
-		Name:   fns.accessor(field),
-		Hasher: "hasher",
+		FieldAccessor: fns.accessor(field),
+		FieldName:     fns.fieldName(field),
+		Hasher:        "hasher",
 	})
 	return b.String(), err
 }
@@ -73,8 +75,8 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 		return "", err
 	}
 	values := Value{
-		Name:   fns.accessor(field),
-		Hasher: "innerHash",
+		FieldAccessor: fns.accessor(field),
+		Hasher:        "innerHash",
 		InnerTemplates: struct {
 			Key   string
 			Value string
@@ -92,8 +94,8 @@ func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 		return "", err
 	}
 	values := Value{
-		Name:   fns.accessor(field),
-		Hasher: "innerHash",
+		FieldAccessor: fns.accessor(field),
+		Hasher:        "innerHash",
 		InnerTemplates: struct {
 			Key   string
 			Value string
@@ -124,6 +126,9 @@ func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, hasher
 	}
 
 	var b bytes.Buffer
-	err := tpl.Execute(&b, Value{Name: valueName, Hasher: hasherName})
+	err := tpl.Execute(&b, Value{
+		FieldAccessor: valueName,
+		Hasher:        hasherName,
+	})
 	return b.String(), err
 }

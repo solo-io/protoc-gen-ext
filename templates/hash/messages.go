@@ -1,15 +1,21 @@
 package hash
 
 const messageTpl = `
-		if h, ok := interface{}({{ .Name }}).(safe_hasher.SafeHasher); ok {
+		if h, ok := interface{}({{ .FieldAccessor }}).(safe_hasher.SafeHasher); ok {
+			if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+				return 0, err
+			}
 			if _, err = h.Hash({{ .Hasher }}); err != nil {
 				return  0, err 
 			}
 		} else {
-			if val, err := hashstructure.Hash({{ .Name }}, nil); err != nil {
+			if fieldValue, err := hashstructure.Hash({{ .FieldAccessor }}, nil); err != nil {
 				return 0, err
 			} else {
-				if err := binary.Write({{ .Hasher }}, binary.LittleEndian, val); err != nil {
+				if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+					return 0, err
+				}
+				if err := binary.Write({{ .Hasher }}, binary.LittleEndian, fieldValue); err != nil {
 					return 0, err
 				}
 			}
@@ -17,19 +23,19 @@ const messageTpl = `
 `
 
 const primitiveTmpl = `
-		err = binary.Write({{ .Hasher }}, binary.LittleEndian,  {{ .Name }} )
+		err = binary.Write({{ .Hasher }}, binary.LittleEndian,  {{ .FieldAccessor }} )
 		if err != nil {return 0, err}
 `
 
 const bytesTpl = `
-		if _, err = {{ .Hasher }}.Write({{ .Name }}); err != nil { 
-			return 0, err 
+		if _, err = {{ .Hasher }}.Write({{ .FieldAccessor }}); err != nil {
+			return 0, err
 		}
 `
 
 const stringTpl = `
-		if _, err = {{ .Hasher }}.Write([]byte({{ .Name }})); err != nil { 
-			return 0, err 
+		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldAccessor }})); err != nil {
+			return 0, err
 		}
 `
 
@@ -37,7 +43,7 @@ const mapTpl = `
 	{
 			var result uint64
 			innerHash := fnv.New64()
-			for k , v := range {{ .Name }} {
+			for k , v := range {{ .FieldAccessor }} {
 				innerHash.Reset()
 	
 				{{ .InnerTemplates.Value }}
@@ -54,7 +60,7 @@ const mapTpl = `
 `
 
 const repeatedTpl = `
-		for _, v := range {{ .Name }} {
+		for _, v := range {{ .FieldAccessor }} {
 			{{ .InnerTemplates.Value }}
 		}
 `

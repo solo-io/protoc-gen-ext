@@ -176,7 +176,7 @@ var _ = Describe("hash", func() {
 			}
 		})
 
-		It("can support objects with same values but different fields across many runs", func() {
+		FIt("can support objects with same values but different fields across many runs", func() {
 			testCases := []*api.Nested{
 				{
 					Simple: &api.Simple{
@@ -186,7 +186,20 @@ var _ = Describe("hash", func() {
 					OtherSimple: nil,
 				},
 				{
+					Details: &_struct.Struct{},
+				},
+				{
 					Simple: nil,
+					OtherSimple: &api.Simple{
+						Str: "hello",
+						Byt: []byte("world"),
+					},
+				},
+				{
+					Simple: &api.Simple{
+						Str: "hello",
+						Byt: []byte("world"),
+					},
 					OtherSimple: &api.Simple{
 						Str: "hello",
 						Byt: []byte("world"),
