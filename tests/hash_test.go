@@ -186,9 +186,6 @@ var _ = Describe("hash", func() {
 					OtherSimple: nil,
 				},
 				{
-					Details: &_struct.Struct{},
-				},
-				{
 					Simple: nil,
 					OtherSimple: &api.Simple{
 						Str: "hello",
