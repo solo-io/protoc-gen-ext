@@ -27,7 +27,6 @@ init:
 empty :=
 space := $(empty) $(empty)
 PACKAGE := github.com/solo-io/protoc-gen-ext
-GOGO_OUTPUT := github.com/gogo/protobuf/gogoproto/*
 
 # protoc-gen-go parameters for properly generating the import path for PGV
 EXT_IMPORT := Mhash/hash.proto=${PACKAGE}/ext

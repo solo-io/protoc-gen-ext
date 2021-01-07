@@ -9,7 +9,6 @@ import (
 
 var _ = Describe("hash", func() {
 	testRuns := 100
-
 	Context("simple (non-nested)", func() {
 
 		var performTest = func(testCases []*api.Simple) {
