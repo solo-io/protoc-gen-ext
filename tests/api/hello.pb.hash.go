@@ -132,10 +132,24 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			return 0, err
 		}
 	} else {
-		if val, err := hashstructure.Hash(m.GetSimple(), nil); err != nil {
+		if fieldValue, err := hashstructure.Hash(m.GetSimple(), nil); err != nil {
 			return 0, err
 		} else {
-			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+			if err := binary.Write(hasher, binary.LittleEndian, Simple+fieldValue); err != nil {
+				return 0, err
+			}
+		}
+	}
+
+	if h, ok := interface{}(m.GetOtherSimple()).(safe_hasher.SafeHasher); ok {
+		if _, err = h.Hash(hasher); err != nil {
+			return 0, err
+		}
+	} else {
+		if fieldValue, err := hashstructure.Hash(m.GetOtherSimple(), nil); err != nil {
+			return 0, err
+		} else {
+			if err := binary.Write(hasher, binary.LittleEndian, OtherSimple+fieldValue); err != nil {
 				return 0, err
 			}
 		}
@@ -151,10 +165,10 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			return 0, err
 		}
 	} else {
-		if val, err := hashstructure.Hash(m.GetEmpty(), nil); err != nil {
+		if fieldValue, err := hashstructure.Hash(m.GetEmpty(), nil); err != nil {
 			return 0, err
 		} else {
-			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+			if err := binary.Write(hasher, binary.LittleEndian, Empty+fieldValue); err != nil {
 				return 0, err
 			}
 		}
@@ -173,10 +187,10 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			return 0, err
 		}
 	} else {
-		if val, err := hashstructure.Hash(m.GetDetails(), nil); err != nil {
+		if fieldValue, err := hashstructure.Hash(m.GetDetails(), nil); err != nil {
 			return 0, err
 		} else {
-			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+			if err := binary.Write(hasher, binary.LittleEndian, Details+fieldValue); err != nil {
 				return 0, err
 			}
 		}
@@ -189,10 +203,10 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 				return 0, err
 			}
 		} else {
-			if val, err := hashstructure.Hash(v, nil); err != nil {
+			if fieldValue, err := hashstructure.Hash(v, nil); err != nil {
 				return 0, err
 			} else {
-				if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+				if err := binary.Write(hasher, binary.LittleEndian, +fieldValue); err != nil {
 					return 0, err
 				}
 			}
@@ -211,10 +225,10 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 					return 0, err
 				}
 			} else {
-				if val, err := hashstructure.Hash(v, nil); err != nil {
+				if fieldValue, err := hashstructure.Hash(v, nil); err != nil {
 					return 0, err
 				} else {
-					if err := binary.Write(innerHash, binary.LittleEndian, val); err != nil {
+					if err := binary.Write(innerHash, binary.LittleEndian, +fieldValue); err != nil {
 						return 0, err
 					}
 				}
@@ -270,10 +284,10 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 				return 0, err
 			}
 		} else {
-			if val, err := hashstructure.Hash(m.GetEmptyOneOf(), nil); err != nil {
+			if fieldValue, err := hashstructure.Hash(m.GetEmptyOneOf(), nil); err != nil {
 				return 0, err
 			} else {
-				if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+				if err := binary.Write(hasher, binary.LittleEndian, EmptyOneOf+fieldValue); err != nil {
 					return 0, err
 				}
 			}
@@ -286,10 +300,10 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 				return 0, err
 			}
 		} else {
-			if val, err := hashstructure.Hash(m.GetNestedOneOf(), nil); err != nil {
+			if fieldValue, err := hashstructure.Hash(m.GetNestedOneOf(), nil); err != nil {
 				return 0, err
 			} else {
-				if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+				if err := binary.Write(hasher, binary.LittleEndian, NestedOneOf+fieldValue); err != nil {
 					return 0, err
 				}
 			}
@@ -334,10 +348,10 @@ func (m *NestedEmpty) Hash(hasher hash.Hash64) (uint64, error) {
 			return 0, err
 		}
 	} else {
-		if val, err := hashstructure.Hash(m.GetNested(), nil); err != nil {
+		if fieldValue, err := hashstructure.Hash(m.GetNested(), nil); err != nil {
 			return 0, err
 		} else {
-			if err := binary.Write(hasher, binary.LittleEndian, val); err != nil {
+			if err := binary.Write(hasher, binary.LittleEndian, Nested+fieldValue); err != nil {
 				return 0, err
 			}
 		}

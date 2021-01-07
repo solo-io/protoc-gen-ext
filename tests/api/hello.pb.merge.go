@@ -55,6 +55,10 @@ func (m *Nested) Merge(overrides *Nested) {
 		m.Simple = overrides.Simple
 	}
 
+	if overrides.OtherSimple != nil {
+		m.OtherSimple = overrides.OtherSimple
+	}
+
 	m.Test = overrides.Test
 
 	if overrides.Empty != nil {
