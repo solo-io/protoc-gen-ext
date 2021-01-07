@@ -176,7 +176,7 @@ var _ = Describe("hash", func() {
 			}
 		})
 
-		FIt("can support objects with same values but different fields across many runs", func() {
+		It("can support objects with same values but different fields across many runs", func() {
 			testCases := []*api.Nested{
 				{
 					Simple: &api.Simple{
