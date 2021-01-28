@@ -28,11 +28,22 @@ func (m {{ (msgTyp .).Pointer }}) Equal(that interface{}) bool {
 
 		{{ range .OneOfs }}
 			switch m.{{ name . }}.(type) {
+				{{ $oneOfInterface := name .}}
 				{{ range .Fields }}
 					case {{ oneof . }}:
+						if _, ok := target.{{ $oneOfInterface }}.({{ oneof . }}); !ok {
+							return false
+						}
+
 						{{ render . }}
 				{{ end }}
+					default:
+						// m is nil but target is not nil
+						if m.{{ name . }} != target.{{ name . }} {
+							return false
+						}
 			}
+
 		{{ end }}
 
 
