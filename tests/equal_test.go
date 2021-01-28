@@ -87,6 +87,53 @@ var _ = Describe("equal", func() {
 			&api.Nested{}, api.Nested{}, true,
 		),
 		Entry(
+			"source non-nil oneOf, target nil",
+			&api.Nested{
+				TestOneOf: &api.Nested_NestedOneOf{
+					NestedOneOf: &api.NestedEmpty{
+						Nested: &api.Nested{
+							Simple: &api.Simple{Str: "hello"},
+						},
+					},
+				},
+			},
+			&api.Nested{}, false,
+		),
+		Entry(
+			"source nil oneOf, target non-nil",
+			&api.Nested{},
+			&api.Nested{
+				TestOneOf: &api.Nested_NestedOneOf{
+					NestedOneOf: &api.NestedEmpty{
+						Nested: &api.Nested{
+							Simple: &api.Simple{Str: "hello"},
+						},
+					},
+				},
+			}, false,
+		),
+		Entry(
+			"source & target non-nil equal oneOfs",
+			&api.Nested{
+				TestOneOf: &api.Nested_NestedOneOf{
+					NestedOneOf: &api.NestedEmpty{
+						Nested: &api.Nested{
+							Simple: &api.Simple{Str: "hello"},
+						},
+					},
+				},
+			},
+			&api.Nested{
+				TestOneOf: &api.Nested_NestedOneOf{
+					NestedOneOf: &api.NestedEmpty{
+						Nested: &api.Nested{
+							Simple: &api.Simple{Str: "hello"},
+						},
+					},
+				},
+			}, true,
+		),
+		Entry(
 			"foreign struct (equal)",
 			&api.Nested{
 				Details: &structpb.Struct{},

@@ -262,6 +262,9 @@ func (m *Nested) Equal(that interface{}) bool {
 	switch m.TestOneOf.(type) {
 
 	case *Nested_EmptyOneOf:
+		if _, ok := target.TestOneOf.(*Nested_EmptyOneOf); !ok {
+			return false
+		}
 
 		if h, ok := interface{}(m.GetEmptyOneOf()).(equality.Equalizer); ok {
 			if !h.Equal(target.GetEmptyOneOf()) {
@@ -274,6 +277,9 @@ func (m *Nested) Equal(that interface{}) bool {
 		}
 
 	case *Nested_NestedOneOf:
+		if _, ok := target.TestOneOf.(*Nested_NestedOneOf); !ok {
+			return false
+		}
 
 		if h, ok := interface{}(m.GetNestedOneOf()).(equality.Equalizer); ok {
 			if !h.Equal(target.GetNestedOneOf()) {
@@ -285,6 +291,11 @@ func (m *Nested) Equal(that interface{}) bool {
 			}
 		}
 
+	default:
+		// m is nil but target is not nil
+		if m.TestOneOf != target.TestOneOf {
+			return false
+		}
 	}
 
 	return true
