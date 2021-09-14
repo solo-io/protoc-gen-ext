@@ -12,26 +12,26 @@ const (
 	cloneName = "clone"
 )
 
-type EqualModule struct {
+type CloneModule struct {
 	*pgs.ModuleBase
 	ctx pgsgo.Context
 }
 
-func Equal() pgs.Module { return &EqualModule{ModuleBase: &pgs.ModuleBase{}} }
+func Equal() pgs.Module { return &CloneModule{ModuleBase: &pgs.ModuleBase{}} }
 
-func (m *EqualModule) InitContext(ctx pgs.BuildContext) {
+func (m *CloneModule) InitContext(ctx pgs.BuildContext) {
 	m.ModuleBase.InitContext(ctx)
 	m.ctx = pgsgo.InitContext(ctx.Parameters())
 }
 
-func (m *EqualModule) Name() string { return cloneName }
+func (m *CloneModule) Name() string { return cloneName }
 
-func (m *EqualModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (m *CloneModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
 	// Process file-level templates
 	tpl := templates.Template(m.Parameters(), clone.Register)
 	for _, f := range targets {
 		var cloneAll bool
-		_, err := f.Extension(extproto.E_EqualAll, &cloneAll)
+		_, err := f.Extension(extproto.E_CloneAll, &cloneAll)
 		if err != nil {
 			m.Debugf("error getting clone extension, %s", err.Error())
 			continue
@@ -52,4 +52,4 @@ func (m *EqualModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.P
 	return m.Artifacts()
 }
 
-var _ pgs.Module = (*EqualModule)(nil)
+var _ pgs.Module = (*CloneModule)(nil)
