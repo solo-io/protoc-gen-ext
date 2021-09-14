@@ -357,6 +357,12 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			}
 		}
 
+	case *Nested_PrimitiveOneOf:
+
+		if _, err = hasher.Write([]byte(m.GetPrimitiveOneOf())); err != nil {
+			return 0, err
+		}
+
 	}
 
 	return hasher.Sum64(), nil

@@ -11,6 +11,7 @@ import (
 type Value struct {
 	Name           string
 	TargetName     string
+	TypeName       string
 	InnerTemplates struct {
 		Value string
 	}
@@ -45,19 +46,25 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	err := tpl.Execute(&b, Value{
 		Name:       fns.accessor(field),
 		TargetName: fns.targetAccessor(field),
+		TypeName:   fns.typeName(field),
 	})
 	return b.String(), err
 }
 
 func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 	var b bytes.Buffer
-	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", fns.targetAccessor(field)+"[k]")
+	valueTemplate, err := fns.simpleRender(
+		field,
+		field.Type().Element(),
+		"v", fns.targetAccessor(field)+"[k]",
+	)
 	if err != nil {
 		return "", err
 	}
 	values := Value{
 		Name:       fns.accessor(field),
 		TargetName: fns.targetAccessor(field),
+		TypeName:   fns.typeName(field),
 		InnerTemplates: struct {
 			Value string
 		}{Value: valueTemplate},
@@ -69,13 +76,19 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 
 func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 	var b bytes.Buffer
-	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", fns.targetAccessor(field)+"[idx]")
+	innerTemplate, err := fns.simpleRender(
+		field,
+		field.Type().Element(),
+		"v",
+		fns.targetAccessor(field)+"[idx]",
+	)
 	if err != nil {
 		return "", err
 	}
 	values := Value{
 		Name:       fns.accessor(field),
 		TargetName: fns.targetAccessor(field),
+		TypeName:   fns.typeName(field),
 		InnerTemplates: struct {
 			Value string
 		}{Value: innerTemplate},
@@ -85,25 +98,35 @@ func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 	return b.String(), err
 }
 
-func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, targetName string) (string, error) {
+func (fns goSharedFuncs) simpleRender(
+	field pgs.Field,
+	typeElem pgs.FieldTypeElem,
+	valueName, targetName string,
+) (string, error) {
 	var tpl *template.Template
-	if field.ProtoType().IsNumeric() ||
-		field.ProtoType() == pgs.BoolT ||
-		field.IsEnum() {
+	var typeName string
+	if typeElem.ProtoType().IsNumeric() ||
+		typeElem.ProtoType() == pgs.BoolT ||
+		typeElem.IsEnum() {
 		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
 	} else {
-		switch field.ProtoType() {
+		switch typeElem.ProtoType() {
 		case pgs.BytesT:
 			tpl = template.Must(fns.tpl.New("bytes").Parse(bytesTpl))
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
 			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
+			typeName = fns.entityTypeName(field, typeElem)
 		default:
 			return "", errors.New("unknown type")
 		}
 	}
 	var b bytes.Buffer
-	err := tpl.Execute(&b, Value{Name: valueName, TargetName: targetName})
+	err := tpl.Execute(&b, Value{
+		Name:       valueName,
+		TargetName: targetName,
+		TypeName:   typeName,
+	})
 	return b.String(), err
 }

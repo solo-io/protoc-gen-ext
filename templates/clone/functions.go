@@ -26,7 +26,7 @@ func register(tpl *template.Template, params pgs.Parameters) {
 		"lookup":          fns.lookup,
 		"msgTyp":          fns.msgTyp,
 		"name":            fns.Name,
-		"oneof":           fns.oneofTypeName,
+		"oneof":           fns.oneofPointerTypeName,
 		"pkg":             fns.PackageName,
 		"typ":             fns.Type,
 		"externalEnums":   fns.externalEnums,
@@ -45,11 +45,25 @@ func (fns goSharedFuncs) accessor(field pgs.Field) string {
 }
 
 func (fns goSharedFuncs) targetAccessor(field pgs.Field) string {
-	return fmt.Sprintf("target.Get%s()", fns.Name(field))
+	return fmt.Sprintf("target.%s", fns.Name(field))
 }
 
 func (fns goSharedFuncs) pointerAccessor(field pgs.Field) string {
 	return fmt.Sprintf("&m.%s", fns.Name(field))
+}
+
+func (fns goSharedFuncs) typeName(field pgs.Field) string {
+	return fmt.Sprintf("%s", fns.Type(field))
+}
+
+func (fns goSharedFuncs) entityTypeName(f pgs.Field, field pgs.FieldTypeElem) string {
+	e := field.Embed()
+	t := pgsgo.TypeName(fns.Name(e))
+	if fns.ImportPath(e) == fns.ImportPath(f) {
+		return fmt.Sprintf("*%s", t.String())
+	}
+
+	return pgsgo.TypeName(fmt.Sprintf("*%s.%s", fns.PackageName(field.Embed()), t)).String()
 }
 
 func (fns goSharedFuncs) fullPackageName(msg pgs.Message) string {
@@ -92,9 +106,11 @@ func (fns goSharedFuncs) lit(x interface{}) string {
 	}
 }
 
-func (fns goSharedFuncs) isBytes(f interface {
-	ProtoType() pgs.ProtoType
-}) bool {
+func (fns goSharedFuncs) isBytes(
+	f interface {
+		ProtoType() pgs.ProtoType
+	},
+) bool {
 	return f.ProtoType() == pgs.BytesT
 }
 
@@ -107,8 +123,12 @@ func (fns goSharedFuncs) byteStr(x []byte) string {
 	return fmt.Sprintf(`"%s"`, strings.Join(elms, ""))
 }
 
-func (fns goSharedFuncs) oneofTypeName(f pgs.Field) pgsgo.TypeName {
+func (fns goSharedFuncs) oneofPointerTypeName(f pgs.Field) pgsgo.TypeName {
 	return pgsgo.TypeName(fns.OneofOption(f)).Pointer()
+}
+
+func (fns goSharedFuncs) oneofTypeName(f pgs.Field) pgsgo.TypeName {
+	return pgsgo.TypeName(fns.OneofOption(f))
 }
 
 func (fns goSharedFuncs) msgTyp(message pgs.Message) pgsgo.TypeName {

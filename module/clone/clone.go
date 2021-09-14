@@ -17,7 +17,7 @@ type CloneModule struct {
 	ctx pgsgo.Context
 }
 
-func Equal() pgs.Module { return &CloneModule{ModuleBase: &pgs.ModuleBase{}} }
+func Clone() pgs.Module { return &CloneModule{ModuleBase: &pgs.ModuleBase{}} }
 
 func (m *CloneModule) InitContext(ctx pgs.BuildContext) {
 	m.ModuleBase.InitContext(ctx)

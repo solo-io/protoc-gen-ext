@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"google.golang.org/protobuf/proto"
-	equality "github.com/solo-io/protoc-gen-ext/pkg/clone"
+	"github.com/solo-io/protoc-gen-ext/pkg/clone"
 
 	{{ range $path, $pkg := enumPackages (externalEnums .) }}
 		{{ $pkg }} "{{ $path }}"
@@ -27,7 +27,7 @@ var (
 	_ = binary.LittleEndian
 	_ = bytes.Compare
 	_ = strings.Compare
-	_ = equality.Cloner(nil)
+	_ = clone.Cloner(nil)
 	_ = proto.Message(nil)
 
 	{{ range (externalEnums .) }}

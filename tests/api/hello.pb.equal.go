@@ -291,6 +291,15 @@ func (m *Nested) Equal(that interface{}) bool {
 			}
 		}
 
+	case *Nested_PrimitiveOneOf:
+		if _, ok := target.TestOneOf.(*Nested_PrimitiveOneOf); !ok {
+			return false
+		}
+
+		if strings.Compare(m.GetPrimitiveOneOf(), target.GetPrimitiveOneOf()) != 0 {
+			return false
+		}
+
 	default:
 		// m is nil but target is not nil
 		if m.TestOneOf != target.TestOneOf {
