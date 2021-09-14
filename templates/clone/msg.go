@@ -18,7 +18,7 @@ func (m {{ (msgTyp .).Pointer }}) Clone() proto.Message {
 				{{ range .Fields }}
 					case {{ oneof . }}:
 
-						{{ render . }}
+						{{ oneofRender . $oneOfInterface}}
 				{{ end }}
 			}
 

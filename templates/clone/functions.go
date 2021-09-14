@@ -27,11 +27,13 @@ func register(tpl *template.Template, params pgs.Parameters) {
 		"msgTyp":          fns.msgTyp,
 		"name":            fns.Name,
 		"oneof":           fns.oneofPointerTypeName,
+		"oneofNonPointer": fns.oneofTypeName,
 		"pkg":             fns.PackageName,
 		"typ":             fns.Type,
 		"externalEnums":   fns.externalEnums,
 		"enumPackages":    fns.enumPackages,
 		"render":          fns.render,
+		"oneofRender":     fns.oneofRender,
 	})
 }
 

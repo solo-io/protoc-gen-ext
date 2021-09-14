@@ -152,22 +152,42 @@ func (m *Nested) Clone() proto.Message {
 	case *Nested_EmptyOneOf:
 
 		if h, ok := interface{}(m.GetEmptyOneOf()).(clone.Cloner); ok {
-			target.EmptyOneOf = h.Clone().(*Empty)
+			target.TestOneOf = &Nested_EmptyOneOf{
+				EmptyOneOf: h.Clone().(*Empty),
+			}
 		} else {
-			target.EmptyOneOf = proto.Clone(m.GetEmptyOneOf()).(*Empty)
+			target.TestOneOf = &Nested_EmptyOneOf{
+				EmptyOneOf: proto.Clone(m.GetEmptyOneOf()).(*Empty),
+			}
 		}
 
 	case *Nested_NestedOneOf:
 
 		if h, ok := interface{}(m.GetNestedOneOf()).(clone.Cloner); ok {
-			target.NestedOneOf = h.Clone().(*NestedEmpty)
+			target.TestOneOf = &Nested_NestedOneOf{
+				NestedOneOf: h.Clone().(*NestedEmpty),
+			}
 		} else {
-			target.NestedOneOf = proto.Clone(m.GetNestedOneOf()).(*NestedEmpty)
+			target.TestOneOf = &Nested_NestedOneOf{
+				NestedOneOf: proto.Clone(m.GetNestedOneOf()).(*NestedEmpty),
+			}
 		}
 
 	case *Nested_PrimitiveOneOf:
 
-		target.PrimitiveOneOf = m.GetPrimitiveOneOf()
+		target.TestOneOf = &Nested_PrimitiveOneOf{
+			PrimitiveOneOf: m.GetPrimitiveOneOf(),
+		}
+
+	case *Nested_BytesOneOf:
+
+		{
+			newArr := make([]byte, len(m.GetBytesOneOf()))
+			copy(newArr, m.GetBytesOneOf())
+			target.TestOneOf = &Nested_BytesOneOf{
+				BytesOneOf: newArr,
+			}
+		}
 
 	}
 

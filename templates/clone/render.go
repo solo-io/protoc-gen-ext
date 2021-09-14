@@ -12,6 +12,8 @@ type Value struct {
 	Name           string
 	TargetName     string
 	TypeName       string
+	Field          pgs.Field
+	OneOfInterface string
 	InnerTemplates struct {
 		Value string
 	}
@@ -47,6 +49,42 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		Name:       fns.accessor(field),
 		TargetName: fns.targetAccessor(field),
 		TypeName:   fns.typeName(field),
+		Field:      field,
+	})
+	return b.String(), err
+}
+
+func (fns goSharedFuncs) oneofRender(field pgs.Field, oneofInterface pgs.Name) (string, error) {
+	var tpl *template.Template
+
+	if field.Type().IsRepeated() {
+		return fns.renderRepeated(field)
+	} else if field.Type().IsMap() {
+		return fns.renderMap(field)
+	} else if field.Type().ProtoType().IsNumeric() ||
+		field.Type().ProtoType() == pgs.BoolT ||
+		field.Type().IsEnum() {
+		tpl = template.Must(fns.tpl.New("primitive").Parse(oneofPrimitiveTmpl))
+	} else {
+		switch field.Type().ProtoType() {
+		case pgs.BytesT:
+			tpl = template.Must(fns.tpl.New("bytes").Parse(oneofBytesTpl))
+		case pgs.StringT:
+			tpl = template.Must(fns.tpl.New("string").Parse(oneofStringTpl))
+		case pgs.MessageT:
+			tpl = template.Must(fns.tpl.New("message").Parse(oneofMessageTpl))
+		default:
+			return "", errors.New("unknown type")
+		}
+	}
+
+	var b bytes.Buffer
+	err := tpl.Execute(&b, Value{
+		Name:           fns.accessor(field),
+		TargetName:     fns.targetAccessor(field),
+		TypeName:       fns.typeName(field),
+		Field:          field,
+		OneOfInterface: oneofInterface.String(),
 	})
 	return b.String(), err
 }
@@ -65,6 +103,7 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 		Name:       fns.accessor(field),
 		TargetName: fns.targetAccessor(field),
 		TypeName:   fns.typeName(field),
+		Field:      field,
 		InnerTemplates: struct {
 			Value string
 		}{Value: valueTemplate},
@@ -89,6 +128,7 @@ func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 		Name:       fns.accessor(field),
 		TargetName: fns.targetAccessor(field),
 		TypeName:   fns.typeName(field),
+		Field:      field,
 		InnerTemplates: struct {
 			Value string
 		}{Value: innerTemplate},
@@ -127,6 +167,7 @@ func (fns goSharedFuncs) simpleRender(
 		Name:       valueName,
 		TargetName: targetName,
 		TypeName:   typeName,
+		Field:      field,
 	})
 	return b.String(), err
 }

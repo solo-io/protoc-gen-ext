@@ -66,6 +66,7 @@ message Nested {
         Empty empty_one_of = 11;
         NestedEmpty nested_one_of = 12;
         string primitive_one_of = 15;
+        bytes bytes_one_of = 16;
     }
 
     repeated uint64 repeated_primitive = 13;

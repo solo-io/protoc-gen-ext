@@ -300,6 +300,15 @@ func (m *Nested) Equal(that interface{}) bool {
 			return false
 		}
 
+	case *Nested_BytesOneOf:
+		if _, ok := target.TestOneOf.(*Nested_BytesOneOf); !ok {
+			return false
+		}
+
+		if bytes.Compare(m.GetBytesOneOf(), target.GetBytesOneOf()) != 0 {
+			return false
+		}
+
 	default:
 		// m is nil but target is not nil
 		if m.TestOneOf != target.TestOneOf {
