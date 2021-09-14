@@ -5,5 +5,5 @@ import (
 )
 
 type Cloner interface {
-	Clone(object proto.Message) proto.Message
+	Clone() proto.Message
 }

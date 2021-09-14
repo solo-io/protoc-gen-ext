@@ -1,26 +1,12 @@
 package clone
 
 const msgTpl = `
-// Equal function
-func (m {{ (msgTyp .).Pointer }}) Equal(that interface{}) bool {
-		if that == nil {
-			return m == nil
+// Clone function
+func (m {{ (msgTyp .).Pointer }}) Clone() proto.Message {
+		if m == nil {
+			return nil
 		}
-	
-		target, ok := that.({{ (msgTyp .).Pointer }})
-		if !ok {
-			that2, ok := that.({{msgTyp .}})
-			if ok {
-				target = &that2
-			} else {
-				return false
-			}
-		}
-		if target == nil {
-			return m == nil
-		} else if m == nil {
-			return false
-		}
+		target := (msgTyp .).Pointer
 
 		{{ range .NonOneOfFields }}
 			{{ render . }}
@@ -32,7 +18,7 @@ func (m {{ (msgTyp .).Pointer }}) Equal(that interface{}) bool {
 				{{ range .Fields }}
 					case {{ oneof . }}:
 						if _, ok := target.{{ $oneOfInterface }}.({{ oneof . }}); !ok {
-							return false
+							return target
 						}
 
 						{{ render . }}
@@ -40,14 +26,14 @@ func (m {{ (msgTyp .).Pointer }}) Equal(that interface{}) bool {
 					default:
 						// m is nil but target is not nil
 						if m.{{ name . }} != target.{{ name . }} {
-							return false
+							return target
 						}
 			}
 
 		{{ end }}
 
 
-		return true
+		return target
 }
 
 `

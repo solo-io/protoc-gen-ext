@@ -1,12 +1,12 @@
 package clone
 
 const messageTpl = `
-		if h, ok := interface{}({{ .Name }}).(equality.Equalizer); ok {
+		if h, ok := interface{}({{ .Name }}).(clone.Cloner); ok {
 			if !h.Equal({{.TargetName}}) {
 				return false
 			}
 		} else {
-			if !proto.Equal({{ .Name }}, {{.TargetName}}) {
+			if !proto.Clone({{ .Name }}, {{.TargetName}}) {
 				return false
 			}
 		}
