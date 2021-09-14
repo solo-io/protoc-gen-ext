@@ -15,7 +15,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"github.com/solo-io/protoc-gen-ext/pkg/clone"
 
-	{{ range $path, $pkg := enumPackages (externalEnums .) }}
+	{{ range $path, $pkg := externalFields . }}
 		{{ $pkg }} "{{ $path }}"
 	{{ end }}
 )
@@ -29,10 +29,6 @@ var (
 	_ = strings.Compare
 	_ = clone.Cloner(nil)
 	_ = proto.Message(nil)
-
-	{{ range (externalEnums .) }}
-		_ = {{ pkg . }}.{{ name . }}(0)
-	{{ end }}
 )
 
 {{ range .AllMessages }}

@@ -12,6 +12,8 @@ import (
 
 	"github.com/solo-io/protoc-gen-ext/pkg/clone"
 	"google.golang.org/protobuf/proto"
+
+	structpb "github.com/golang/protobuf/ptypes/struct"
 )
 
 // ensure the imports are used

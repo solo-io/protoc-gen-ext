@@ -30,8 +30,7 @@ func register(tpl *template.Template, params pgs.Parameters) {
 		"oneofNonPointer": fns.oneofTypeName,
 		"pkg":             fns.PackageName,
 		"typ":             fns.Type,
-		"externalEnums":   fns.externalEnums,
-		"enumPackages":    fns.enumPackages,
+		"externalFields":  fns.externalFields,
 		"render":          fns.render,
 		"oneofRender":     fns.oneofRender,
 	})
@@ -137,24 +136,30 @@ func (fns goSharedFuncs) msgTyp(message pgs.Message) pgsgo.TypeName {
 	return pgsgo.TypeName(fns.Name(message))
 }
 
-func (fns goSharedFuncs) externalEnums(file pgs.File) []pgs.Enum {
-	var out []pgs.Enum
+func (fns goSharedFuncs) externalFields(file pgs.File) map[pgs.FilePath]pgs.Name {
+	var (
+		out []pgs.Entity
+	)
 
 	for _, msg := range file.AllMessages() {
 		for _, fld := range msg.Fields() {
+			fld.Imports()
+			if en := fld.Type().Embed(); fld.Type().IsEmbed() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
+				out = append(out, en)
+			}
 			if en := fld.Type().Enum(); fld.Type().IsEnum() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
 				out = append(out, en)
 			}
 		}
 	}
 
-	return out
+	return fns.externalPackages(out)
 }
 
-func (fns goSharedFuncs) enumPackages(enums []pgs.Enum) map[pgs.FilePath]pgs.Name {
-	out := make(map[pgs.FilePath]pgs.Name, len(enums))
+func (fns goSharedFuncs) externalPackages(entities []pgs.Entity) map[pgs.FilePath]pgs.Name {
+	out := make(map[pgs.FilePath]pgs.Name, len(entities))
 
-	for _, en := range enums {
+	for _, en := range entities {
 		out[fns.ImportPath(en)] = fns.PackageName(en)
 	}
 
