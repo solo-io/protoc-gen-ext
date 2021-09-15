@@ -1,6 +1,7 @@
 package main
 
 import (
+	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"github.com/solo-io/protoc-gen-ext/module/clone"
 	"github.com/solo-io/protoc-gen-ext/module/equal"
 	"github.com/solo-io/protoc-gen-ext/module/hash"
@@ -18,6 +19,6 @@ func main() {
 		merge.Merge(),
 		clone.Clone(),
 	).RegisterPostProcessor(
-	// pgsgo.GoFmt(),
+		pgsgo.GoFmt(),
 	).Render()
 }
