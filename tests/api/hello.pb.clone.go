@@ -168,6 +168,32 @@ func (m *Nested) Clone() proto.Message {
 		}
 	}
 
+	if len(m.GetRepeatedExternal()) > 0 {
+		target.RepeatedExternal = make([]*github_com_golang_protobuf_ptypes_struct.Struct, len(m.GetRepeatedExternal()))
+		for idx, v := range m.GetRepeatedExternal() {
+
+			if h, ok := interface{}(v).(clone.Cloner); ok {
+				target.RepeatedExternal[idx] = h.Clone().(*github_com_golang_protobuf_ptypes_struct.Struct)
+			} else {
+				target.RepeatedExternal[idx] = proto.Clone(v).(*github_com_golang_protobuf_ptypes_struct.Struct)
+			}
+
+		}
+	}
+
+	if len(m.GetMapExternal()) > 0 {
+		target.MapExternal = make(map[string]*github_com_golang_protobuf_ptypes_struct.Struct, len(m.GetMapExternal()))
+		for k, v := range m.GetMapExternal() {
+
+			if h, ok := interface{}(v).(clone.Cloner); ok {
+				target.MapExternal[k] = h.Clone().(*github_com_golang_protobuf_ptypes_struct.Struct)
+			} else {
+				target.MapExternal[k] = proto.Clone(v).(*github_com_golang_protobuf_ptypes_struct.Struct)
+			}
+
+		}
+	}
+
 	switch m.TestOneOf.(type) {
 
 	case *Nested_EmptyOneOf:

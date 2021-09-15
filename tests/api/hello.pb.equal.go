@@ -259,6 +259,40 @@ func (m *Nested) Equal(that interface{}) bool {
 
 	}
 
+	if len(m.GetRepeatedExternal()) != len(target.GetRepeatedExternal()) {
+		return false
+	}
+	for idx, v := range m.GetRepeatedExternal() {
+
+		if h, ok := interface{}(v).(equality.Equalizer); ok {
+			if !h.Equal(target.GetRepeatedExternal()[idx]) {
+				return false
+			}
+		} else {
+			if !proto.Equal(v, target.GetRepeatedExternal()[idx]) {
+				return false
+			}
+		}
+
+	}
+
+	if len(m.GetMapExternal()) != len(target.GetMapExternal()) {
+		return false
+	}
+	for k, v := range m.GetMapExternal() {
+
+		if h, ok := interface{}(v).(equality.Equalizer); ok {
+			if !h.Equal(target.GetMapExternal()[k]) {
+				return false
+			}
+		} else {
+			if !proto.Equal(v, target.GetMapExternal()[k]) {
+				return false
+			}
+		}
+
+	}
+
 	switch m.TestOneOf.(type) {
 
 	case *Nested_EmptyOneOf:

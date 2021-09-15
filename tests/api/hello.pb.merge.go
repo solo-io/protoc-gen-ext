@@ -89,6 +89,14 @@ func (m *Nested) Merge(overrides *Nested) {
 
 	m.RepeatedPrimitive = overrides.RepeatedPrimitive
 
+	if overrides.RepeatedExternal != nil {
+		m.RepeatedExternal = overrides.RepeatedExternal
+	}
+
+	if overrides.MapExternal != nil {
+		m.MapExternal = overrides.MapExternal
+	}
+
 	if overrides.TestOneOf != nil {
 		m.TestOneOf = overrides.TestOneOf
 	}

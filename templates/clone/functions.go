@@ -56,12 +56,23 @@ func (fns goSharedFuncs) pointerAccessor(field pgs.Field) string {
 }
 
 func (fns goSharedFuncs) typeName(field pgs.Field) string {
-	if !field.Type().IsEmbed() {
-		fns.Debugf("getting type for embedded standard field (%s)", field.Name())
-		return fmt.Sprintf("%s", fns.Type(field))
-	}
-	return fns.importableTypeName(field, field.Type().Embed())
+	if field.Type().IsEmbed() {
+		return fns.importableTypeName(field, field.Type().Embed())
+	} else if field.Type().IsMap() || field.Type().IsRepeated() {
+		// We only care about embedded elements
 
+		// Replace the pacakge name
+		if field.Type().Element().IsEmbed() {
+			typeName := fmt.Sprintf("%s", fns.Type(field))
+			e := field.Type().Element().Embed()
+			properImportPath := fns.packageName(e)
+			typeName = strings.ReplaceAll(typeName, fns.PackageName(e).String(), properImportPath)
+			return typeName
+		}
+	}
+
+	fns.Debugf("getting type for embedded standard field (%s)", field.Name())
+	return fmt.Sprintf("%s", fns.Type(field))
 }
 
 func (fns goSharedFuncs) entityTypeName(f pgs.Field, field pgs.FieldTypeElem) string {
@@ -83,6 +94,7 @@ func (fns goSharedFuncs) packageName(e pgs.Entity) string {
 	importName := fns.ImportPath(e).String()
 	importName = strings.ReplaceAll(importName, "/", "_")
 	importName = strings.ReplaceAll(importName, ".", "_")
+	importName = strings.ReplaceAll(importName, "-", "_")
 	fns.Debugf("packageName (%s)", importName)
 	return importName
 }
