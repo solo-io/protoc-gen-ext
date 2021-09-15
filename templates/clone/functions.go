@@ -11,10 +11,11 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 )
 
-func register(tpl *template.Template, params pgs.Parameters) {
+func register(tpl *template.Template, params pgs.Parameters, common pgs.DebuggerCommon) {
 	fns := goSharedFuncs{
-		Context: pgsgo.InitContext(params),
-		tpl:     tpl,
+		Context:        pgsgo.InitContext(params),
+		DebuggerCommon: common,
+		tpl:            tpl,
 	}
 
 	tpl.Funcs(map[string]interface{}{
@@ -38,6 +39,7 @@ func register(tpl *template.Template, params pgs.Parameters) {
 
 type goSharedFuncs struct {
 	pgsgo.Context
+	pgs.DebuggerCommon
 	tpl *template.Template
 }
 
@@ -140,26 +142,62 @@ func (fns goSharedFuncs) externalFields(file pgs.File) map[pgs.FilePath]pgs.Name
 	var (
 		out []pgs.Entity
 	)
+	//
+	// for _, v := range file.TransitiveImports() {
+	// 	if fns.PackageName(v) != fns.PackageName(file) {
+	// 		out = append(out, v)
+	// 	}
+	// }
 
 	for _, msg := range file.AllMessages() {
 		for _, fld := range msg.Fields() {
-			fld.Imports()
-			if en := fld.Type().Embed(); fld.Type().IsEmbed() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
+			// if en := fld.Type().Embed(); fld.Type().IsEmbed() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
+			// 	out = append(out, en)
+			// }
+			// if en := fld.Type().Enum(); fld.Type().IsEnum() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
+			// 	out = append(out, en)
+			// }
+			if en := fld.Type().Embed(); fld.Type().IsEmbed() {
 				out = append(out, en)
 			}
-			if en := fld.Type().Enum(); fld.Type().IsEnum() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
+			if en := fld.Type().Enum(); fld.Type().IsEnum() {
 				out = append(out, en)
+			}
+			// // Handle repeated
+			// if en := fld.Type().Element(); (fld.Type().IsRepeated() || fld.Type().IsMap()) && en.IsEmbed() && en.Embed().Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en.Embed()) != fns.PackageName(fld) {
+			// 	out = append(out, en.Embed())
+			// }
+			//
+			// // Handle map
+			// if en := fld.Type().Key(); fld.Type().IsMap() && en.IsEmbed() && en.Embed().Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en.Embed()) != fns.PackageName(fld) {
+			// 	out = append(out, en.Embed())
+			// }
+			// Handle repeated
+			if en := fld.Type().Element(); (fld.Type().IsRepeated() || fld.Type().IsMap()) && en.IsEmbed() {
+				out = append(out, en.Embed())
+			}
+
+			// Handle map
+			if en := fld.Type().Key(); fld.Type().IsMap() && en.IsEmbed() {
+				out = append(out, en.Embed())
 			}
 		}
 	}
 
-	return fns.externalPackages(out)
+	return fns.externalPackages(out, file)
 }
 
-func (fns goSharedFuncs) externalPackages(entities []pgs.Entity) map[pgs.FilePath]pgs.Name {
+func (fns goSharedFuncs) externalPackages(
+	entities []pgs.Entity,
+	file pgs.File,
+) map[pgs.FilePath]pgs.Name {
 	out := make(map[pgs.FilePath]pgs.Name, len(entities))
 
 	for _, en := range entities {
+		if fns.PackageName(en) == fns.PackageName(file) && en.Package().ProtoName() == file.Package().ProtoName() {
+			continue
+		}
+		fns.Debugf("adding entity with file path (%s), and file name (%s)", fns.ImportPath(en), fns.PackageName(en))
 		out[fns.ImportPath(en)] = fns.PackageName(en)
 	}
 
