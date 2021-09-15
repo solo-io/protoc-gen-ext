@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var _ = Describe("equal", func() {
+var _ = Describe("clone", func() {
 
 	Measure("it should do something hard efficiently", func(b Benchmarker) {
 		test := &api.Nested{
