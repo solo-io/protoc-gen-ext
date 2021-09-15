@@ -14,6 +14,23 @@ import (
 var _ = Describe("clone", func() {
 
 	Measure("it should do something hard efficiently", func(b Benchmarker) {
+		externalStruct := &structpb.Struct{
+			Fields: map[string]*structpb.Value{
+				"I'm a field": {
+					Kind: &structpb.Value_StructValue{
+						StructValue: &structpb.Struct{
+							Fields: map[string]*structpb.Value{
+								"another field": {
+									Kind: &structpb.Value_StringValue{
+										StringValue: "ashjedsah",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
 		test := &api.Nested{
 			Simple: &api.Simple{
 				Byt: []byte("hello"),
@@ -22,24 +39,8 @@ var _ = Describe("clone", func() {
 			Test:        50,
 			Empty:       &api.Empty{},
 			Hello:       []string{"one", "two", "three"},
-			Details: &structpb.Struct{
-				Fields: map[string]*structpb.Value{
-					"I'm a field": {
-						Kind: &structpb.Value_StructValue{
-							StructValue: &structpb.Struct{
-								Fields: map[string]*structpb.Value{
-									"another field": {
-										Kind: &structpb.Value_StringValue{
-											StringValue: "ashjedsah",
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			Skipper: nil,
+			Details:     externalStruct,
+			Skipper:     nil,
 			X: []*api.Simple{
 				{
 					Str: "ajskldja",
@@ -71,6 +72,11 @@ var _ = Describe("clone", func() {
 				},
 			},
 			RepeatedPrimitive: []uint64{1, 2, 3, 4},
+			RepeatedExternal:  []*structpb.Struct{externalStruct, externalStruct},
+			MapExternal: map[string]*structpb.Struct{
+				"hello": externalStruct,
+				"world": externalStruct,
+			},
 		}
 		const times = 10000
 		reflectionBased := b.Time(fmt.Sprintf("runtime of %d reflect-based hash calls", times), func() {
