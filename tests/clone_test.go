@@ -20,8 +20,8 @@ var _ = Describe("clone", func() {
 			},
 			OtherSimple: &api.Simple{},
 			Test:        50,
-			Empty:       nil,
-			Hello:       nil,
+			Empty:       &api.Empty{},
+			Hello:       []string{"one", "two", "three"},
 			Details: &structpb.Struct{
 				Fields: map[string]*structpb.Value{
 					"I'm a field": {
@@ -63,8 +63,14 @@ var _ = Describe("clone", func() {
 				"hello":     "world",
 				"something": "test",
 			},
-			TestOneOf:         nil,
-			RepeatedPrimitive: nil,
+			TestOneOf: &api.Nested_NestedOneOf{
+				NestedOneOf: &api.NestedEmpty{
+					Nested: &api.Nested{
+						Simple: &api.Simple{},
+					},
+				},
+			},
+			RepeatedPrimitive: []uint64{1, 2, 3, 4},
 		}
 		const times = 10000
 		reflectionBased := b.Time(fmt.Sprintf("runtime of %d reflect-based hash calls", times), func() {
@@ -160,12 +166,47 @@ var _ = Describe("clone", func() {
 			},
 		),
 		Entry(
-			"slice (equal)",
+			"slice",
 			&api.Nested{
 				X: []*api.Simple{
 					{
 						Str: "hello",
 					},
+				},
+			},
+		),
+		Entry(
+			"oneof message",
+			&api.Nested{
+				TestOneOf: &api.Nested_NestedOneOf{
+					NestedOneOf: &api.NestedEmpty{
+						Nested: &api.Nested{
+							Simple: &api.Simple{},
+							TestOneOf: &api.Nested_NestedOneOf{
+								NestedOneOf: &api.NestedEmpty{
+									Nested: &api.Nested{
+										Empty: &api.Empty{},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		),
+		Entry(
+			"oneof bytes",
+			&api.Nested{
+				TestOneOf: &api.Nested_BytesOneOf{
+					BytesOneOf: []byte("hjsakda"),
+				},
+			},
+		),
+		Entry(
+			"oneof primitive",
+			&api.Nested{
+				TestOneOf: &api.Nested_PrimitiveOneOf{
+					PrimitiveOneOf: "hello",
 				},
 			},
 		),
