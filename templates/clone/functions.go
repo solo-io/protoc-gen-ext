@@ -56,17 +56,35 @@ func (fns goSharedFuncs) pointerAccessor(field pgs.Field) string {
 }
 
 func (fns goSharedFuncs) typeName(field pgs.Field) string {
-	return fmt.Sprintf("%s", fns.Type(field))
+	if !field.Type().IsEmbed() {
+		fns.Debugf("getting type for embedded standard field (%s)", field.Name())
+		return fmt.Sprintf("%s", fns.Type(field))
+	}
+	return fns.importableTypeName(field, field.Type().Embed())
+
 }
 
 func (fns goSharedFuncs) entityTypeName(f pgs.Field, field pgs.FieldTypeElem) string {
 	e := field.Embed()
+	return fns.importableTypeName(f, e)
+}
+
+func (fns goSharedFuncs) importableTypeName(f pgs.Field, e pgs.Entity) string {
 	t := pgsgo.TypeName(fns.Name(e))
+
 	if fns.ImportPath(e) == fns.ImportPath(f) {
 		return fmt.Sprintf("*%s", t.String())
 	}
 
-	return pgsgo.TypeName(fmt.Sprintf("*%s.%s", fns.PackageName(field.Embed()), t)).String()
+	return fmt.Sprintf("*%s.%s", fns.packageName(e), t)
+}
+
+func (fns goSharedFuncs) packageName(e pgs.Entity) string {
+	importName := fns.ImportPath(e).String()
+	importName = strings.ReplaceAll(importName, "/", "_")
+	importName = strings.ReplaceAll(importName, ".", "_")
+	fns.Debugf("packageName (%s)", importName)
+	return importName
 }
 
 func (fns goSharedFuncs) fullPackageName(msg pgs.Message) string {
@@ -138,45 +156,23 @@ func (fns goSharedFuncs) msgTyp(message pgs.Message) pgsgo.TypeName {
 	return pgsgo.TypeName(fns.Name(message))
 }
 
-func (fns goSharedFuncs) externalFields(file pgs.File) map[pgs.FilePath]pgs.Name {
+func (fns goSharedFuncs) externalFields(file pgs.File) map[pgs.FilePath]string {
 	var (
 		out []pgs.Entity
 	)
-	//
-	// for _, v := range file.TransitiveImports() {
-	// 	if fns.PackageName(v) != fns.PackageName(file) {
-	// 		out = append(out, v)
-	// 	}
-	// }
 
 	for _, msg := range file.AllMessages() {
 		for _, fld := range msg.Fields() {
-			// if en := fld.Type().Embed(); fld.Type().IsEmbed() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
-			// 	out = append(out, en)
-			// }
-			// if en := fld.Type().Enum(); fld.Type().IsEnum() && en.Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en) != fns.PackageName(fld) {
-			// 	out = append(out, en)
-			// }
 			if en := fld.Type().Embed(); fld.Type().IsEmbed() {
 				out = append(out, en)
 			}
 			if en := fld.Type().Enum(); fld.Type().IsEnum() {
 				out = append(out, en)
 			}
-			// // Handle repeated
-			// if en := fld.Type().Element(); (fld.Type().IsRepeated() || fld.Type().IsMap()) && en.IsEmbed() && en.Embed().Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en.Embed()) != fns.PackageName(fld) {
-			// 	out = append(out, en.Embed())
-			// }
-			//
-			// // Handle map
-			// if en := fld.Type().Key(); fld.Type().IsMap() && en.IsEmbed() && en.Embed().Package().ProtoName() != fld.Package().ProtoName() && fns.PackageName(en.Embed()) != fns.PackageName(fld) {
-			// 	out = append(out, en.Embed())
-			// }
 			// Handle repeated
 			if en := fld.Type().Element(); (fld.Type().IsRepeated() || fld.Type().IsMap()) && en.IsEmbed() {
 				out = append(out, en.Embed())
 			}
-
 			// Handle map
 			if en := fld.Type().Key(); fld.Type().IsMap() && en.IsEmbed() {
 				out = append(out, en.Embed())
@@ -190,15 +186,15 @@ func (fns goSharedFuncs) externalFields(file pgs.File) map[pgs.FilePath]pgs.Name
 func (fns goSharedFuncs) externalPackages(
 	entities []pgs.Entity,
 	file pgs.File,
-) map[pgs.FilePath]pgs.Name {
-	out := make(map[pgs.FilePath]pgs.Name, len(entities))
+) map[pgs.FilePath]string {
+	out := make(map[pgs.FilePath]string, len(entities))
 
 	for _, en := range entities {
 		if fns.PackageName(en) == fns.PackageName(file) && en.Package().ProtoName() == file.Package().ProtoName() {
 			continue
 		}
 		fns.Debugf("adding entity with file path (%s), and file name (%s)", fns.ImportPath(en), fns.PackageName(en))
-		out[fns.ImportPath(en)] = fns.PackageName(en)
+		out[fns.ImportPath(en)] = fns.packageName(en)
 	}
 
 	return out

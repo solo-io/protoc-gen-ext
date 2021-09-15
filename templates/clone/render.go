@@ -21,7 +21,7 @@ type Value struct {
 
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
-
+	var typeName string
 	if field.Type().IsRepeated() {
 		return fns.renderRepeated(field)
 	} else if field.Type().IsMap() {
@@ -39,6 +39,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
 			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
+			typeName = fns.typeName(field)
 		default:
 			return "", errors.New("unknown type")
 		}
@@ -48,7 +49,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	err := tpl.Execute(&b, Value{
 		Name:       fns.accessor(field),
 		TargetName: fns.targetAccessor(field),
-		TypeName:   fns.typeName(field),
+		TypeName:   typeName,
 		Field:      field,
 	})
 	return b.String(), err
@@ -56,7 +57,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 func (fns goSharedFuncs) oneofRender(field pgs.Field, oneofInterface pgs.Name) (string, error) {
 	var tpl *template.Template
-
+	var typeName string
 	if field.Type().IsRepeated() {
 		return fns.renderRepeated(field)
 	} else if field.Type().IsMap() {
@@ -73,6 +74,7 @@ func (fns goSharedFuncs) oneofRender(field pgs.Field, oneofInterface pgs.Name) (
 			tpl = template.Must(fns.tpl.New("string").Parse(oneofStringTpl))
 		case pgs.MessageT:
 			tpl = template.Must(fns.tpl.New("message").Parse(oneofMessageTpl))
+			typeName = fns.typeName(field)
 		default:
 			return "", errors.New("unknown type")
 		}
@@ -82,7 +84,7 @@ func (fns goSharedFuncs) oneofRender(field pgs.Field, oneofInterface pgs.Name) (
 	err := tpl.Execute(&b, Value{
 		Name:           fns.accessor(field),
 		TargetName:     fns.targetAccessor(field),
-		TypeName:       fns.typeName(field),
+		TypeName:       typeName,
 		Field:          field,
 		OneOfInterface: oneofInterface.String(),
 	})
