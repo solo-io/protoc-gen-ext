@@ -3,10 +3,11 @@ package clone
 const msgTpl = `
 // Clone function
 func (m {{ (msgTyp .).Pointer }}) Clone() proto.Message {
+		var target *{{ name .}}
 		if m == nil {
-			return nil
+			return target
 		}
-		target := &{{msgTyp .}}{}
+		target = &{{msgTyp .}}{}
 
 		{{ range .NonOneOfFields }}
 			{{ render . }}

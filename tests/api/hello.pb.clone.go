@@ -29,15 +29,18 @@ var (
 
 // Clone function
 func (m *Simple) Clone() proto.Message {
+	var target *Simple
 	if m == nil {
-		return nil
+		return target
 	}
-	target := &Simple{}
+	target = &Simple{}
 
 	target.Str = m.GetStr()
 
-	target.Byt = make([]byte, len(m.GetByt()))
-	copy(target.Byt, m.GetByt())
+	if m.GetByt() != nil {
+		target.Byt = make([]byte, len(m.GetByt()))
+		copy(target.Byt, m.GetByt())
+	}
 
 	target.TestUint32 = m.GetTestUint32()
 
@@ -74,10 +77,11 @@ func (m *Simple) Clone() proto.Message {
 
 // Clone function
 func (m *Nested) Clone() proto.Message {
+	var target *Nested
 	if m == nil {
-		return nil
+		return target
 	}
-	target := &Nested{}
+	target = &Nested{}
 
 	if h, ok := interface{}(m.GetSimple()).(clone.Cloner); ok {
 		target.Simple = h.Clone().(*Simple)
@@ -99,10 +103,13 @@ func (m *Nested) Clone() proto.Message {
 		target.Empty = proto.Clone(m.GetEmpty()).(*Empty)
 	}
 
-	for idx, v := range m.GetHello() {
+	if len(m.GetHello()) > 0 {
+		target.Hello = make([]string, len(m.GetHello()))
+		for idx, v := range m.GetHello() {
 
-		target.Hello[idx] = v
+			target.Hello[idx] = v
 
+		}
 	}
 
 	if h, ok := interface{}(m.GetDetails()).(clone.Cloner); ok {
@@ -117,36 +124,48 @@ func (m *Nested) Clone() proto.Message {
 		target.Skipper = proto.Clone(m.GetSkipper()).(*Simple)
 	}
 
-	for idx, v := range m.GetX() {
+	if len(m.GetX()) > 0 {
+		target.X = make([]*Simple, len(m.GetX()))
+		for idx, v := range m.GetX() {
 
-		if h, ok := interface{}(v).(clone.Cloner); ok {
-			target.X[idx] = h.Clone().(*Simple)
-		} else {
-			target.X[idx] = proto.Clone(v).(*Simple)
+			if h, ok := interface{}(v).(clone.Cloner); ok {
+				target.X[idx] = h.Clone().(*Simple)
+			} else {
+				target.X[idx] = proto.Clone(v).(*Simple)
+			}
+
 		}
-
 	}
 
-	for k, v := range m.GetInitial() {
+	if len(m.GetInitial()) > 0 {
+		target.Initial = make(map[string]*Simple, len(m.GetInitial()))
+		for k, v := range m.GetInitial() {
 
-		if h, ok := interface{}(v).(clone.Cloner); ok {
-			target.Initial[k] = h.Clone().(*Simple)
-		} else {
-			target.Initial[k] = proto.Clone(v).(*Simple)
+			if h, ok := interface{}(v).(clone.Cloner); ok {
+				target.Initial[k] = h.Clone().(*Simple)
+			} else {
+				target.Initial[k] = proto.Clone(v).(*Simple)
+			}
+
 		}
-
 	}
 
-	for k, v := range m.GetSimpleMap() {
+	if len(m.GetSimpleMap()) > 0 {
+		target.SimpleMap = make(map[string]string, len(m.GetSimpleMap()))
+		for k, v := range m.GetSimpleMap() {
 
-		target.SimpleMap[k] = v
+			target.SimpleMap[k] = v
 
+		}
 	}
 
-	for idx, v := range m.GetRepeatedPrimitive() {
+	if len(m.GetRepeatedPrimitive()) > 0 {
+		target.RepeatedPrimitive = make([]uint64, len(m.GetRepeatedPrimitive()))
+		for idx, v := range m.GetRepeatedPrimitive() {
 
-		target.RepeatedPrimitive[idx] = v
+			target.RepeatedPrimitive[idx] = v
 
+		}
 	}
 
 	switch m.TestOneOf.(type) {
@@ -183,11 +202,15 @@ func (m *Nested) Clone() proto.Message {
 
 	case *Nested_BytesOneOf:
 
-		{
+		if m.GetBytesOneOf() != nil {
 			newArr := make([]byte, len(m.GetBytesOneOf()))
 			copy(newArr, m.GetBytesOneOf())
 			target.TestOneOf = &Nested_BytesOneOf{
 				BytesOneOf: newArr,
+			}
+		} else {
+			target.TestOneOf = &Nested_BytesOneOf{
+				BytesOneOf: nil,
 			}
 		}
 
@@ -198,20 +221,22 @@ func (m *Nested) Clone() proto.Message {
 
 // Clone function
 func (m *Empty) Clone() proto.Message {
+	var target *Empty
 	if m == nil {
-		return nil
+		return target
 	}
-	target := &Empty{}
+	target = &Empty{}
 
 	return target
 }
 
 // Clone function
 func (m *NestedEmpty) Clone() proto.Message {
+	var target *NestedEmpty
 	if m == nil {
-		return nil
+		return target
 	}
-	target := &NestedEmpty{}
+	target = &NestedEmpty{}
 
 	if h, ok := interface{}(m.GetNested()).(clone.Cloner); ok {
 		target.Nested = h.Clone().(*Nested)

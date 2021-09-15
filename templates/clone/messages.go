@@ -34,28 +34,40 @@ const oneofPrimitiveTmpl = `
 const oneofStringTpl = oneofPrimitiveTmpl
 
 const bytesTpl = `
-		{{ .TargetName }} = make([]byte, len({{ .Name }}))
-		copy({{ .TargetName }}, {{ .Name }})
+		if {{ .Name }} != nil {
+			{{ .TargetName }} = make([]byte, len({{ .Name }}))
+			copy({{ .TargetName }}, {{ .Name }})
+		}
 `
 
 const oneofBytesTpl = `
-		{
+		if {{ .Name }} != nil {
 			newArr := make([]byte, len({{ .Name }}))
 			copy(newArr, {{ .Name }})
 			target.{{ .OneOfInterface }} = &{{ oneofNonPointer .Field }}{
 				{{ name .Field }}: newArr,
 			}
+		} else {
+			target.{{ .OneOfInterface }} = &{{ oneofNonPointer .Field }}{
+				{{ name .Field }}: nil,
+			}
 		}
 `
 
 const mapTpl = `
-		for k , v := range {{ .Name }} {
-			{{ .InnerTemplates.Value }}
+		if len({{ .Name }}) > 0 {
+			{{ .TargetName }} = make({{.TypeName}}, len({{ .Name }}))
+			for k , v := range {{ .Name }} {
+				{{ .InnerTemplates.Value }}
+			}
 		}
 `
 
 const repeatedTpl = `
-		for idx, v := range {{ .Name }} {
-			{{ .InnerTemplates.Value }}
+		if len({{ .Name }}) > 0 {
+			{{ .TargetName }} = make({{.TypeName}}, len({{ .Name }}))
+			for idx, v := range {{ .Name }} {
+				{{ .InnerTemplates.Value }}
+			}	
 		}
 `
