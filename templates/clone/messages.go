@@ -55,7 +55,7 @@ const oneofBytesTpl = `
 `
 
 const mapTpl = `
-		if len({{ .Name }}) > 0 {
+		if {{ .Name }} != nil {
 			{{ .TargetName }} = make({{.TypeName}}, len({{ .Name }}))
 			for k , v := range {{ .Name }} {
 				{{ .InnerTemplates.Value }}
@@ -64,7 +64,7 @@ const mapTpl = `
 `
 
 const repeatedTpl = `
-		if len({{ .Name }}) > 0 {
+		if {{ .Name }} != nil {
 			{{ .TargetName }} = make({{.TypeName}}, len({{ .Name }}))
 			for idx, v := range {{ .Name }} {
 				{{ .InnerTemplates.Value }}

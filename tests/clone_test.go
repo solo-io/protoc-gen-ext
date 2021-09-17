@@ -162,6 +162,12 @@ var _ = Describe("clone", func() {
 			},
 		),
 		Entry(
+			"empty repeated",
+			&api.Nested{
+				Hello: []string{},
+			},
+		),
+		Entry(
 			"map",
 			&api.Nested{
 				Initial: map[string]*api.Simple{

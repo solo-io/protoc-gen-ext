@@ -103,7 +103,7 @@ func (m *Nested) Clone() proto.Message {
 		target.Empty = proto.Clone(m.GetEmpty()).(*Empty)
 	}
 
-	if len(m.GetHello()) > 0 {
+	if m.GetHello() != nil {
 		target.Hello = make([]string, len(m.GetHello()))
 		for idx, v := range m.GetHello() {
 
@@ -124,7 +124,7 @@ func (m *Nested) Clone() proto.Message {
 		target.Skipper = proto.Clone(m.GetSkipper()).(*Simple)
 	}
 
-	if len(m.GetX()) > 0 {
+	if m.GetX() != nil {
 		target.X = make([]*Simple, len(m.GetX()))
 		for idx, v := range m.GetX() {
 
@@ -137,7 +137,7 @@ func (m *Nested) Clone() proto.Message {
 		}
 	}
 
-	if len(m.GetInitial()) > 0 {
+	if m.GetInitial() != nil {
 		target.Initial = make(map[string]*Simple, len(m.GetInitial()))
 		for k, v := range m.GetInitial() {
 
@@ -150,7 +150,7 @@ func (m *Nested) Clone() proto.Message {
 		}
 	}
 
-	if len(m.GetSimpleMap()) > 0 {
+	if m.GetSimpleMap() != nil {
 		target.SimpleMap = make(map[string]string, len(m.GetSimpleMap()))
 		for k, v := range m.GetSimpleMap() {
 
@@ -159,7 +159,7 @@ func (m *Nested) Clone() proto.Message {
 		}
 	}
 
-	if len(m.GetRepeatedPrimitive()) > 0 {
+	if m.GetRepeatedPrimitive() != nil {
 		target.RepeatedPrimitive = make([]uint64, len(m.GetRepeatedPrimitive()))
 		for idx, v := range m.GetRepeatedPrimitive() {
 
@@ -168,7 +168,7 @@ func (m *Nested) Clone() proto.Message {
 		}
 	}
 
-	if len(m.GetRepeatedExternal()) > 0 {
+	if m.GetRepeatedExternal() != nil {
 		target.RepeatedExternal = make([]*github_com_golang_protobuf_ptypes_struct.Struct, len(m.GetRepeatedExternal()))
 		for idx, v := range m.GetRepeatedExternal() {
 
@@ -181,7 +181,7 @@ func (m *Nested) Clone() proto.Message {
 		}
 	}
 
-	if len(m.GetMapExternal()) > 0 {
+	if m.GetMapExternal() != nil {
 		target.MapExternal = make(map[string]*github_com_golang_protobuf_ptypes_struct.Struct, len(m.GetMapExternal()))
 		for k, v := range m.GetMapExternal() {
 
