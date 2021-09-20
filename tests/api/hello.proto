@@ -7,6 +7,7 @@ import "extproto/ext.proto";
 option (extproto.hash_all) = true;
 option (extproto.merge_all) = true;
 option (extproto.equal_all) = true;
+option (extproto.clone_all) = true;
 
 option go_package = "github.com/solo-io/protoc-gen-ext/tests/api";
 
@@ -64,9 +65,15 @@ message Nested {
     oneof test_one_of {
         Empty empty_one_of = 11;
         NestedEmpty nested_one_of = 12;
+        string primitive_one_of = 15;
+        bytes bytes_one_of = 16;
     }
 
     repeated uint64 repeated_primitive = 13;
+
+    repeated google.protobuf.Struct repeated_external = 17;
+
+    map <string, google.protobuf.Struct> map_external = 18;
 }
 
 

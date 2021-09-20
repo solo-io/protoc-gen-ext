@@ -11,11 +11,17 @@ extend google.protobuf.FileOptions {
     // message fields associated with it that do support validation.
     optional bool hash_all = 10071;
 
+
+    // enabling equal_all for a file will generate a Equal(m) method for all Messages in the file.
+    // Equal(m) will do a deep equal on the caller, and incoming object.
     optional bool equal_all = 10072;
 
     // enabling merge_all for a file will generate a Merge(m) method for all Messages in the file.
-    // Merge(m) will replace non-nil fields from a Proto passed as an override.
     optional bool merge_all = 10073;
+
+    // enabling clone_all for a file will generate a Clone(m) method for all Messages in the file.
+    // Clone(m) will deep copy the message.
+    optional bool clone_all = 10074;
 }
 
 // Validation rules applied at the field level
