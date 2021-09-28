@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"google.golang.org/protobuf/proto"
+	gogo_proto "github.com/gogo/protobuf/proto"
 	"github.com/solo-io/protoc-gen-ext/pkg/clone"
 
 	{{ range $path, $pkg := externalFields . }}
@@ -29,6 +30,7 @@ var (
 	_ = strings.Compare
 	_ = clone.Cloner(nil)
 	_ = proto.Message(nil)
+	_ = gogo_proto.Message(nil)
 )
 
 {{ range .AllMessages }}

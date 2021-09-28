@@ -3,6 +3,7 @@ module github.com/solo-io/protoc-gen-ext
 go 1.13
 
 require (
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/lyft/protoc-gen-star v0.6.0
