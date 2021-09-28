@@ -18,11 +18,15 @@ type Value struct {
 	InnerTemplates struct {
 		Value string
 	}
+	ProtoLibrary string
 }
 
 func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var tpl *template.Template
 	var typeName string
+
+	protoLibrary := "proto" // By default use the Google proto library
+
 	if field.Type().IsRepeated() {
 		return fns.renderRepeated(field)
 	} else if field.Type().IsMap() {
@@ -40,7 +44,14 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
 			var gogoClone bool
-			_, err := field.Extension(extproto.E_GogoClone, &gogoClone)
+			if _, err := field.Extension(extproto.E_GogoClone, &gogoClone); err != nil {
+				return "", err
+			}
+
+			if gogoClone {
+				protoLibrary = "gogo_proto"
+			}
+
 			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 			typeName = fns.typeName(field)
 		default:
@@ -50,10 +61,11 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 	var b bytes.Buffer
 	err := tpl.Execute(&b, Value{
-		Name:       fns.accessor(field),
-		TargetName: fns.targetAccessor(field),
-		TypeName:   typeName,
-		Field:      field,
+		Name:         fns.accessor(field),
+		TargetName:   fns.targetAccessor(field),
+		TypeName:     typeName,
+		Field:        field,
+		ProtoLibrary: protoLibrary,
 	})
 	return b.String(), err
 }
@@ -61,6 +73,9 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 func (fns goSharedFuncs) oneofRender(field pgs.Field, oneofInterface pgs.Name) (string, error) {
 	var tpl *template.Template
 	var typeName string
+
+	protoLibrary := "proto" // By default use the Google proto library
+
 	if field.Type().IsRepeated() {
 		return fns.renderRepeated(field)
 	} else if field.Type().IsMap() {
@@ -76,6 +91,15 @@ func (fns goSharedFuncs) oneofRender(field pgs.Field, oneofInterface pgs.Name) (
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(oneofStringTpl))
 		case pgs.MessageT:
+			var gogoClone bool
+			if _, err := field.Extension(extproto.E_GogoClone, &gogoClone); err != nil {
+				return "", err
+			}
+
+			if gogoClone {
+				protoLibrary = "gogo_proto"
+			}
+
 			tpl = template.Must(fns.tpl.New("message").Parse(oneofMessageTpl))
 			typeName = fns.typeName(field)
 		default:
@@ -90,6 +114,7 @@ func (fns goSharedFuncs) oneofRender(field pgs.Field, oneofInterface pgs.Name) (
 		TypeName:       typeName,
 		Field:          field,
 		OneOfInterface: oneofInterface.String(),
+		ProtoLibrary:   protoLibrary,
 	})
 	return b.String(), err
 }
@@ -150,6 +175,9 @@ func (fns goSharedFuncs) simpleRender(
 ) (string, error) {
 	var tpl *template.Template
 	var typeName string
+
+	protoLibrary := "proto" // By default use the Google proto library
+
 	if typeElem.ProtoType().IsNumeric() ||
 		typeElem.ProtoType() == pgs.BoolT ||
 		typeElem.IsEnum() {
@@ -161,6 +189,15 @@ func (fns goSharedFuncs) simpleRender(
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
+			var gogoClone bool
+			if _, err := field.Extension(extproto.E_GogoClone, &gogoClone); err != nil {
+				return "", err
+			}
+
+			if gogoClone {
+				protoLibrary = "gogo_proto"
+			}
+
 			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 			typeName = fns.entityTypeName(field, typeElem)
 		default:
@@ -169,10 +206,11 @@ func (fns goSharedFuncs) simpleRender(
 	}
 	var b bytes.Buffer
 	err := tpl.Execute(&b, Value{
-		Name:       valueName,
-		TargetName: targetName,
-		TypeName:   typeName,
-		Field:      field,
+		Name:         valueName,
+		TargetName:   targetName,
+		TypeName:     typeName,
+		Field:        field,
+		ProtoLibrary: protoLibrary,
 	})
 	return b.String(), err
 }

@@ -4,7 +4,7 @@ const messageTpl = `
 		if h, ok := interface{}({{ .Name }}).(clone.Cloner); ok {
 			{{ .TargetName }} = h.Clone().({{.TypeName}})
 		} else {
-			{{ .TargetName }} = proto.Clone({{.Name}}).({{.TypeName}})
+			{{ .TargetName }} = {{ .ProtoLibrary }}.Clone({{.Name}}).({{.TypeName}})
 		}
 `
 
@@ -15,7 +15,7 @@ const oneofMessageTpl = `
 			}
 		} else {
 			target.{{ .OneOfInterface }} = &{{ oneofNonPointer .Field }}{
-				{{ name .Field }}: proto.Clone({{ .Name }}).({{.TypeName}}),
+				{{ name .Field }}: {{ .ProtoLibrary }}.Clone({{ .Name }}).({{.TypeName}}),
 			}
 		}
 `
@@ -68,6 +68,6 @@ const repeatedTpl = `
 			{{ .TargetName }} = make({{.TypeName}}, len({{ .Name }}))
 			for idx, v := range {{ .Name }} {
 				{{ .InnerTemplates.Value }}
-			}	
+			}
 		}
 `

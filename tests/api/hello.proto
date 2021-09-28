@@ -74,6 +74,8 @@ message Nested {
     repeated google.protobuf.Struct repeated_external = 17;
 
     map <string, google.protobuf.Struct> map_external = 18;
+
+    google.protobuf.Struct gogo_field = 19 [(extproto.gogo_clone) = true];
 }
 
 

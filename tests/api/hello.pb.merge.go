@@ -97,6 +97,10 @@ func (m *Nested) Merge(overrides *Nested) {
 		m.MapExternal = overrides.MapExternal
 	}
 
+	if overrides.GogoField != nil {
+		m.GogoField = overrides.GogoField
+	}
+
 	if overrides.TestOneOf != nil {
 		m.TestOneOf = overrides.TestOneOf
 	}

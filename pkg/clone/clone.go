@@ -2,7 +2,6 @@ package clone
 
 import (
 	"github.com/golang/protobuf/proto"
-
 )
 
 type Cloner interface {

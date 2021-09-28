@@ -134,7 +134,7 @@ var (
 	//
 	// optional bool sensitive = 10073;
 	E_Sensitive = &file_extproto_ext_proto_extTypes[6]
-	// This field will not be merged when a message's Merge() method is called.
+	// This field will use gogo clone if cloning is enabled.
 	//
 	// optional bool gogo_clone = 10074;
 	E_GogoClone = &file_extproto_ext_proto_extTypes[7]

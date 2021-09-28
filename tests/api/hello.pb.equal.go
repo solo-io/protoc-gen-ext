@@ -293,6 +293,16 @@ func (m *Nested) Equal(that interface{}) bool {
 
 	}
 
+	if h, ok := interface{}(m.GetGogoField()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetGogoField()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetGogoField(), target.GetGogoField()) {
+			return false
+		}
+	}
+
 	switch m.TestOneOf.(type) {
 
 	case *Nested_EmptyOneOf:

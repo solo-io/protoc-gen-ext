@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"strings"
 
+	gogo_proto "github.com/gogo/protobuf/proto"
 	"github.com/solo-io/protoc-gen-ext/pkg/clone"
 	"google.golang.org/protobuf/proto"
 
@@ -25,6 +26,7 @@ var (
 	_ = strings.Compare
 	_ = clone.Cloner(nil)
 	_ = proto.Message(nil)
+	_ = gogo_proto.Message(nil)
 )
 
 // Clone function
@@ -192,6 +194,12 @@ func (m *Nested) Clone() proto.Message {
 			}
 
 		}
+	}
+
+	if h, ok := interface{}(m.GetGogoField()).(clone.Cloner); ok {
+		target.GogoField = h.Clone().(*github_com_golang_protobuf_ptypes_struct.Struct)
+	} else {
+		target.GogoField = gogo_proto.Clone(m.GetGogoField()).(*github_com_golang_protobuf_ptypes_struct.Struct)
 	}
 
 	switch m.TestOneOf.(type) {
