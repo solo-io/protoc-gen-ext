@@ -6,6 +6,7 @@ import (
 	"text/template"
 
 	pgs "github.com/lyft/protoc-gen-star"
+	"github.com/solo-io/protoc-gen-ext/extproto"
 )
 
 type Value struct {
@@ -38,6 +39,8 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
+			var gogoClone bool
+			_, err := field.Extension(extproto.E_GogoClone, &gogoClone)
 			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 			typeName = fns.typeName(field)
 		default:

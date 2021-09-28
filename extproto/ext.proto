@@ -35,6 +35,9 @@ extend google.protobuf.FieldOptions {
 
     // This field will not be merged when a message's Merge() method is called.
     optional bool sensitive = 10073;
+
+    // This field will not be merged when a message's Merge() method is called.
+    optional bool gogo_clone = 10074;
 }
 
 // Validation rules applied at the field level
