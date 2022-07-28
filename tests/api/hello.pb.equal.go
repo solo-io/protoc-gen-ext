@@ -114,6 +114,182 @@ func (m *Simple) Equal(that interface{}) bool {
 		return false
 	}
 
+	if m.StrOptional != nil {
+		if target.StrOptional == nil {
+			return false
+		}
+		if m.GetStrOptional() != target.GetStrOptional() {
+			return false
+		}
+	} else if target.StrOptional != nil {
+		return false
+	}
+
+	if m.TestUint32Optional != nil {
+		if target.TestUint32Optional == nil {
+			return false
+		}
+		if m.GetTestUint32Optional() != target.GetTestUint32Optional() {
+			return false
+		}
+	} else if target.TestUint32Optional != nil {
+		return false
+	}
+
+	if m.TestUint64Optional != nil {
+		if target.TestUint64Optional == nil {
+			return false
+		}
+		if m.GetTestUint64Optional() != target.GetTestUint64Optional() {
+			return false
+		}
+	} else if target.TestUint64Optional != nil {
+		return false
+	}
+
+	if m.TestBoolOptional != nil {
+		if target.TestBoolOptional == nil {
+			return false
+		}
+		if m.GetTestBoolOptional() != target.GetTestBoolOptional() {
+			return false
+		}
+	} else if target.TestBoolOptional != nil {
+		return false
+	}
+
+	if m.DoubleTestOptional != nil {
+		if target.DoubleTestOptional == nil {
+			return false
+		}
+		if m.GetDoubleTestOptional() != target.GetDoubleTestOptional() {
+			return false
+		}
+	} else if target.DoubleTestOptional != nil {
+		return false
+	}
+
+	if m.FloatTestOptional != nil {
+		if target.FloatTestOptional == nil {
+			return false
+		}
+		if m.GetFloatTestOptional() != target.GetFloatTestOptional() {
+			return false
+		}
+	} else if target.FloatTestOptional != nil {
+		return false
+	}
+
+	if m.Int32TestOptional != nil {
+		if target.Int32TestOptional == nil {
+			return false
+		}
+		if m.GetInt32TestOptional() != target.GetInt32TestOptional() {
+			return false
+		}
+	} else if target.Int32TestOptional != nil {
+		return false
+	}
+
+	if m.Int64TestOptional != nil {
+		if target.Int64TestOptional == nil {
+			return false
+		}
+		if m.GetInt64TestOptional() != target.GetInt64TestOptional() {
+			return false
+		}
+	} else if target.Int64TestOptional != nil {
+		return false
+	}
+
+	if m.Sint32TestOptional != nil {
+		if target.Sint32TestOptional == nil {
+			return false
+		}
+		if m.GetSint32TestOptional() != target.GetSint32TestOptional() {
+			return false
+		}
+	} else if target.Sint32TestOptional != nil {
+		return false
+	}
+
+	if m.Sint64TestOptional != nil {
+		if target.Sint64TestOptional == nil {
+			return false
+		}
+		if m.GetSint64TestOptional() != target.GetSint64TestOptional() {
+			return false
+		}
+	} else if target.Sint64TestOptional != nil {
+		return false
+	}
+
+	if m.Fixed32TestOptional != nil {
+		if target.Fixed32TestOptional == nil {
+			return false
+		}
+		if m.GetFixed32TestOptional() != target.GetFixed32TestOptional() {
+			return false
+		}
+	} else if target.Fixed32TestOptional != nil {
+		return false
+	}
+
+	if m.Fixed64TestOptional != nil {
+		if target.Fixed64TestOptional == nil {
+			return false
+		}
+		if m.GetFixed64TestOptional() != target.GetFixed64TestOptional() {
+			return false
+		}
+	} else if target.Fixed64TestOptional != nil {
+		return false
+	}
+
+	if m.Sfixed32TestOptional != nil {
+		if target.Sfixed32TestOptional == nil {
+			return false
+		}
+		if m.GetSfixed32TestOptional() != target.GetSfixed32TestOptional() {
+			return false
+		}
+	} else if target.Sfixed32TestOptional != nil {
+		return false
+	}
+
+	if m.Sfixed64TestOptional != nil {
+		if target.Sfixed64TestOptional == nil {
+			return false
+		}
+		if m.GetSfixed64TestOptional() != target.GetSfixed64TestOptional() {
+			return false
+		}
+	} else if target.Sfixed64TestOptional != nil {
+		return false
+	}
+
+	if m.StrSkippedOptional != nil {
+		if target.StrSkippedOptional == nil {
+			return false
+		}
+		if m.GetStrSkippedOptional() != target.GetStrSkippedOptional() {
+			return false
+		}
+	} else if target.StrSkippedOptional != nil {
+		return false
+	}
+
+	if m.IntSkippedOptional != nil {
+		if target.IntSkippedOptional == nil {
+			return false
+		}
+		if m.GetIntSkippedOptional() != target.GetIntSkippedOptional() {
+			return false
+		}
+	} else if target.IntSkippedOptional != nil {
+		return false
+	}
+
 	return true
 }
 

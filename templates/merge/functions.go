@@ -20,6 +20,7 @@ func register(tpl *template.Template, params pgs.Parameters) {
 		"pkg":         fns.PackageName,
 		"renderField": fns.renderField,
 		"renderOneOf": fns.renderOneOf,
+		"name":        fns.Name,
 	})
 }
 

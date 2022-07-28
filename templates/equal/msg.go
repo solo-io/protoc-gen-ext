@@ -26,7 +26,20 @@ func (m {{ (msgTyp .).Pointer }}) Equal(that interface{}) bool {
 			{{ render . }}
 		{{ end }}
 
-		{{ range .OneOfs }}
+		{{ range .SyntheticOneOfFields }}
+		if m.{{ name . }} != nil {
+			if target.{{ name . }} == nil {
+				return false
+			}
+			if m.Get{{ name . }}() != target.Get{{ name . }}() {
+				return false
+			}
+		} else if target.{{ name . }} != nil {
+			return false
+		}
+		{{ end }}
+
+		{{ range .RealOneOfs }}
 			switch m.{{ name . }}.(type) {
 				{{ $oneOfInterface := name .}}
 				{{ range .Fields }}

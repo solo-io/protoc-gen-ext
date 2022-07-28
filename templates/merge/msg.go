@@ -9,7 +9,14 @@ func (m {{ (msgTyp .).Pointer }}) Merge(overrides {{ (msgTyp .).Pointer }}) {
 		{{ renderField . }}
 	{{ end }}
 
-	{{ range .OneOfs }}
+	{{ range .SyntheticOneOfFields }}
+	if overrides.{{ name . }} != nil {
+		v := overrides.Get{{ name . }}()
+		m.{{ name . }} = &v
+	}
+	{{ end }}
+
+	{{ range .RealOneOfs }}
 		{{ renderOneOf . }}
 	{{ end }}
 
