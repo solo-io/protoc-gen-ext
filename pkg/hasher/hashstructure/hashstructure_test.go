@@ -1,3 +1,7 @@
+/*
+This is a slightly modified version of github.com/mitchellh/hashstructure@v1.0.0
+See comment in hashstructure.go for more details.
+*/
 package hashstructure
 
 import (

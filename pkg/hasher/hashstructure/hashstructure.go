@@ -1,8 +1,17 @@
 /**
-This is a slightly modified version of github.com/mitchellh/hashstructure
+This is a slightly modified version of github.com/mitchellh/hashstructure@v1.0.0
 
 The reduced feature set is to avoid using reflect.Value.Interface() that can cause data races when
-used with google.golang.org/protobuf
+used with google.golang.org/protobuf.
+
+With the new `google.golang.org/protobuf` package, functions like Clone and Marshal can mutate
+private message state; When hash is performed in a different go-routine, `reflect.Value.Interface()`
+seem to read this state, triggering a data race when code is run in the race detector.
+
+The original hash structure called `reflect.Value.Interface()` on structs to see if they implement
+hashstructure specific interfaces. As proto messages are generated code, we know that they do not implement
+these interfaces, so we can safely drop the support for these interfaces and remove the call to
+`reflect.Value.Interface()` - thus solving the data race.
 */
 
 package hashstructure
