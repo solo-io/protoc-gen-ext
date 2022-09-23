@@ -47,9 +47,9 @@ GO_IMPORT:=$(subst $(space),,$(GO_IMPORT_SPACES))
 PHONE: generated-code
 generated-code:
 	PATH=$(DEPSGOBIN):$$PATH protoc -I=. --go_out="${EXT_IMPORT}:." extproto/ext.proto
-	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/extproto/ extproto
-	PATH=$(DEPSGOBIN):$$PATH protoc -I=. -I=./extproto --go_out="." --ext_out="."  tests/api/hello.proto
-	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/tests/api/ tests/api
+	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/extproto/* extproto
+	PATH=$(DEPSGOBIN):$$PATH protoc -I=. -I=./extproto --go_out="." --ext_out="." tests/api/hello.proto
+	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/tests/api/* tests/api/
 	PATH=$(DEPSGOBIN):$$PATH rm -rf github.com
 	PATH=$(DEPSGOBIN):$$PATH goimports -w .
 
