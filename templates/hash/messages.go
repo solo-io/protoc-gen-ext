@@ -6,7 +6,7 @@ const messageTpl = `
 				return 0, err
 			}
 			if _, err = h.Hash({{ .Hasher }}); err != nil {
-				return  0, err 
+				return 0, err 
 			}
 		} else {
 			if fieldValue, err := hashstructure.Hash({{ .FieldAccessor }}, nil); err != nil {
@@ -15,7 +15,9 @@ const messageTpl = `
 				if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
 					return 0, err
 				}
-				if err := binary.Write({{ .Hasher }}, binary.LittleEndian, fieldValue); err != nil {
+				var buf [8]byte
+				binary.LittleEndian.PutUint64(buf[:], fieldValue)
+				if _, err := hasher.Write(buf[:]); err != nil {
 					return 0, err
 				}
 			}
@@ -23,8 +25,36 @@ const messageTpl = `
 `
 
 const primitiveTmpl = `
-		err = binary.Write({{ .Hasher }}, binary.LittleEndian,  {{ .FieldAccessor }} )
+		err = binary.Write({{ .Hasher }}, binary.LittleEndian, {{ .FieldAccessor }} )
 		if err != nil {return 0, err}
+`
+
+const primitiveBoolTmpl = `
+		{
+			if {{ .FieldAccessor }} {
+				_, err = hasher.Write([]byte{1})
+			} else {
+				_, err = hasher.Write([]byte{0})
+			}
+			if err != nil {return 0, err}
+		}
+`
+const primitiveFloatTmpl = `
+		{
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], math.Float64bits(float64({{ .FieldAccessor }})))
+			_, err = hasher.Write(buf[:])
+			if err != nil {return 0, err}
+		}
+`
+
+const primitiveIntTmpl = `
+		{
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], uint64({{ .FieldAccessor }}))
+			_, err = hasher.Write(buf[:])
+			if err != nil {return 0, err}
+		}
 `
 
 const bytesTpl = `
@@ -53,7 +83,9 @@ const mapTpl = `
 
 				result = result ^ innerHash.Sum64()
 			}
-			err = binary.Write(hasher, binary.LittleEndian, result)
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], result)
+			_, err := hasher.Write(buf[:])
 			if err != nil {return 0, err}
 			
 	}

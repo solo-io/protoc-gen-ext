@@ -31,16 +31,17 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	if skipHash {
 		return "", nil
 	}
-
-	if field.Type().ProtoType().IsNumeric() ||
-		field.Type().ProtoType() == pgs.BoolT ||
+	if field.Type().IsRepeated() {
+		return fns.renderRepeated(field)
+	} else if field.Type().ProtoType() == pgs.BoolT {
+		tpl = template.Must(fns.tpl.New("primitiveBoolTmpl").Parse(primitiveBoolTmpl))
+	} else if field.Type().ProtoType().IsInt() ||
 		field.Type().IsEnum() {
-
-		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
+		tpl = template.Must(fns.tpl.New("primitiveIntTmpl").Parse(primitiveIntTmpl))
+	} else if field.Type().ProtoType().IsNumeric() {
+		tpl = template.Must(fns.tpl.New("primitiveFloatTmpl").Parse(primitiveFloatTmpl))
 	} else if field.Type().IsMap() {
 		return fns.renderMap(field)
-	} else if field.Type().IsRepeated() {
-		return fns.renderRepeated(field)
 	} else {
 		switch field.Type().ProtoType() {
 		case pgs.BytesT:
@@ -82,7 +83,7 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 			Value string
 		}{Value: valueTemplate, Key: keyTemplate},
 	}
-	outerTpl := template.Must(fns.tpl.New("repeated").Parse(mapTpl))
+	outerTpl := template.Must(fns.tpl.New("map").Parse(mapTpl))
 	err = outerTpl.Execute(&b, values)
 	return b.String(), err
 }
@@ -101,7 +102,7 @@ func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 			Value string
 		}{Value: innerTemplate},
 	}
-	outerTpl := template.Must(fns.tpl.New("map").Parse(repeatedTpl))
+	outerTpl := template.Must(fns.tpl.New("repeated").Parse(repeatedTpl))
 	err = outerTpl.Execute(&b, values)
 	return b.String(), err
 }
@@ -111,7 +112,17 @@ func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, hasher
 	if field.ProtoType().IsNumeric() ||
 		field.ProtoType() == pgs.BoolT ||
 		field.IsEnum() {
-		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
+
+		if field.ProtoType() == pgs.BoolT {
+			tpl = template.Must(fns.tpl.New("primitiveBoolTmpl").Parse(primitiveBoolTmpl))
+		} else if field.ProtoType().IsInt() || field.IsEnum() {
+			tpl = template.Must(fns.tpl.New("primitiveIntTmpl").Parse(primitiveIntTmpl))
+		} else if field.ProtoType().IsNumeric() {
+			tpl = template.Must(fns.tpl.New("primitiveFloatTmpl").Parse(primitiveFloatTmpl))
+		} else {
+			// should never get here
+			tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
+		}
 	} else {
 		switch field.ProtoType() {
 		case pgs.BytesT:

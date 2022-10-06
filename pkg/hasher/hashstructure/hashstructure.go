@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"hash"
 	"hash/fnv"
+	"math"
 	"reflect"
 )
 
@@ -163,10 +164,32 @@ func (w *walker) visit(v reflect.Value, opts *visitOpts) (uint64, error) {
 	k := v.Kind()
 
 	// We can shortcut numeric values by directly binary writing them
-	if k >= reflect.Int && k <= reflect.Complex64 {
+	if k >= reflect.Bool && k <= reflect.Complex64 {
 		// A direct hash calculation
 		w.h.Reset()
-		err := binary.Write(w.h, binary.LittleEndian, v.Interface())
+		// 8 byte buffe works for all 64-bit and below types
+		var buf [8]byte
+		var err error
+		switch k {
+		case reflect.Bool:
+			if v.Bool() {
+				_, err = w.h.Write([]byte{1})
+			} else {
+				_, err = w.h.Write([]byte{0})
+			}
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			i := v.Int()
+			binary.BigEndian.PutUint64(buf[:], uint64(i))
+			_, err = w.h.Write(buf[:])
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+			binary.BigEndian.PutUint64(buf[:], v.Uint())
+			_, err = w.h.Write(buf[:])
+		case reflect.Float32, reflect.Float64:
+			binary.BigEndian.PutUint64(buf[:], math.Float64bits(v.Float()))
+			_, err = w.h.Write(buf[:])
+		default:
+			err = binary.Write(w.h, binary.LittleEndian, v.Interface())
+		}
 		return w.h.Sum64(), err
 	}
 
@@ -310,8 +333,12 @@ func hashUpdateOrdered(h hash.Hash64, a, b uint64) uint64 {
 
 	// We just panic if the binary writes fail because we are writing
 	// an int64 which should never be fail-able.
-	e1 := binary.Write(h, binary.LittleEndian, a)
-	e2 := binary.Write(h, binary.LittleEndian, b)
+	var buf [8]byte
+	binary.LittleEndian.PutUint64(buf[:], a)
+	_, e1 := h.Write(buf[:])
+	binary.LittleEndian.PutUint64(buf[:], b)
+	_, e2 := h.Write(buf[:])
+
 	if e1 != nil {
 		panic(e1)
 	}

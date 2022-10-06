@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"hash"
 	"hash/fnv"
+	"math"
 
 	safe_hasher "github.com/solo-io/protoc-gen-ext/pkg/hasher"
 	"github.com/solo-io/protoc-gen-ext/pkg/hasher/hashstructure"
@@ -19,6 +20,7 @@ var (
 	_ = errors.New("")
 	_ = fmt.Print
 	_ = binary.LittleEndian
+	_ = math.Float64bits
 	_ = new(hash.Hash64)
 	_ = fnv.New64
 	_ = hashstructure.Hash
@@ -46,69 +48,123 @@ func (m *Simple) Hash(hasher hash.Hash64) (uint64, error) {
 		return 0, err
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetTestUint32())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetTestUint32()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetTestUint64())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetTestUint64()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetTestBool())
-	if err != nil {
-		return 0, err
+	{
+		if m.GetTestBool() {
+			_, err = hasher.Write([]byte{1})
+		} else {
+			_, err = hasher.Write([]byte{0})
+		}
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetDoubleTest())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], math.Float64bits(float64(m.GetDoubleTest())))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetFloatTest())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], math.Float64bits(float64(m.GetFloatTest())))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetInt32Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetInt32Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetInt64Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetInt64Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetSint32Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetSint32Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetSint64Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetSint64Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetFixed32Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetFixed32Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetFixed64Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetFixed64Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetSfixed32Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetSfixed32Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetSfixed64Test())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetSfixed64Test()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	return hasher.Sum64(), nil
@@ -141,7 +197,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			if _, err = hasher.Write([]byte("Simple")); err != nil {
 				return 0, err
 			}
-			if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], fieldValue)
+			if _, err := hasher.Write(buf[:]); err != nil {
 				return 0, err
 			}
 		}
@@ -161,15 +219,21 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			if _, err = hasher.Write([]byte("OtherSimple")); err != nil {
 				return 0, err
 			}
-			if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], fieldValue)
+			if _, err := hasher.Write(buf[:]); err != nil {
 				return 0, err
 			}
 		}
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetTest())
-	if err != nil {
-		return 0, err
+	{
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], uint64(m.GetTest()))
+		_, err = hasher.Write(buf[:])
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	if h, ok := interface{}(m.GetEmpty()).(safe_hasher.SafeHasher); ok {
@@ -186,7 +250,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			if _, err = hasher.Write([]byte("Empty")); err != nil {
 				return 0, err
 			}
-			if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], fieldValue)
+			if _, err := hasher.Write(buf[:]); err != nil {
 				return 0, err
 			}
 		}
@@ -214,7 +280,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 			if _, err = hasher.Write([]byte("Details")); err != nil {
 				return 0, err
 			}
-			if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], fieldValue)
+			if _, err := hasher.Write(buf[:]); err != nil {
 				return 0, err
 			}
 		}
@@ -236,7 +304,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 				if _, err = hasher.Write([]byte("")); err != nil {
 					return 0, err
 				}
-				if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+				var buf [8]byte
+				binary.LittleEndian.PutUint64(buf[:], fieldValue)
+				if _, err := hasher.Write(buf[:]); err != nil {
 					return 0, err
 				}
 			}
@@ -264,7 +334,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 					if _, err = innerHash.Write([]byte("")); err != nil {
 						return 0, err
 					}
-					if err := binary.Write(innerHash, binary.LittleEndian, fieldValue); err != nil {
+					var buf [8]byte
+					binary.LittleEndian.PutUint64(buf[:], fieldValue)
+					if _, err := hasher.Write(buf[:]); err != nil {
 						return 0, err
 					}
 				}
@@ -276,7 +348,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 
 			result = result ^ innerHash.Sum64()
 		}
-		err = binary.Write(hasher, binary.LittleEndian, result)
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], result)
+		_, err := hasher.Write(buf[:])
 		if err != nil {
 			return 0, err
 		}
@@ -299,16 +373,26 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 
 			result = result ^ innerHash.Sum64()
 		}
-		err = binary.Write(hasher, binary.LittleEndian, result)
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], result)
+		_, err := hasher.Write(buf[:])
 		if err != nil {
 			return 0, err
 		}
 
 	}
 
-	err = binary.Write(hasher, binary.LittleEndian, m.GetRepeatedPrimitive())
-	if err != nil {
-		return 0, err
+	for _, v := range m.GetRepeatedPrimitive() {
+
+		{
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], uint64(v))
+			_, err = hasher.Write(buf[:])
+			if err != nil {
+				return 0, err
+			}
+		}
+
 	}
 
 	for _, v := range m.GetRepeatedExternal() {
@@ -327,7 +411,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 				if _, err = hasher.Write([]byte("")); err != nil {
 					return 0, err
 				}
-				if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+				var buf [8]byte
+				binary.LittleEndian.PutUint64(buf[:], fieldValue)
+				if _, err := hasher.Write(buf[:]); err != nil {
 					return 0, err
 				}
 			}
@@ -355,7 +441,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 					if _, err = innerHash.Write([]byte("")); err != nil {
 						return 0, err
 					}
-					if err := binary.Write(innerHash, binary.LittleEndian, fieldValue); err != nil {
+					var buf [8]byte
+					binary.LittleEndian.PutUint64(buf[:], fieldValue)
+					if _, err := hasher.Write(buf[:]); err != nil {
 						return 0, err
 					}
 				}
@@ -367,7 +455,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 
 			result = result ^ innerHash.Sum64()
 		}
-		err = binary.Write(hasher, binary.LittleEndian, result)
+		var buf [8]byte
+		binary.LittleEndian.PutUint64(buf[:], result)
+		_, err := hasher.Write(buf[:])
 		if err != nil {
 			return 0, err
 		}
@@ -392,7 +482,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 				if _, err = hasher.Write([]byte("EmptyOneOf")); err != nil {
 					return 0, err
 				}
-				if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+				var buf [8]byte
+				binary.LittleEndian.PutUint64(buf[:], fieldValue)
+				if _, err := hasher.Write(buf[:]); err != nil {
 					return 0, err
 				}
 			}
@@ -414,7 +506,9 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 				if _, err = hasher.Write([]byte("NestedOneOf")); err != nil {
 					return 0, err
 				}
-				if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+				var buf [8]byte
+				binary.LittleEndian.PutUint64(buf[:], fieldValue)
+				if _, err := hasher.Write(buf[:]); err != nil {
 					return 0, err
 				}
 			}
@@ -480,7 +574,9 @@ func (m *NestedEmpty) Hash(hasher hash.Hash64) (uint64, error) {
 			if _, err = hasher.Write([]byte("Nested")); err != nil {
 				return 0, err
 			}
-			if err := binary.Write(hasher, binary.LittleEndian, fieldValue); err != nil {
+			var buf [8]byte
+			binary.LittleEndian.PutUint64(buf[:], fieldValue)
+			if _, err := hasher.Write(buf[:]); err != nil {
 				return 0, err
 			}
 		}

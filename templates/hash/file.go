@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"hash"
 	"hash/fnv"
+	"math"
 
 	"github.com/solo-io/protoc-gen-ext/pkg/hasher/hashstructure"
 	safe_hasher "github.com/solo-io/protoc-gen-ext/pkg/hasher"
@@ -25,6 +26,7 @@ var (
 	_ = errors.New("")
 	_ = fmt.Print
 	_ = binary.LittleEndian
+	_ = math.Float64bits
 	_ = new(hash.Hash64)
 	_ = fnv.New64
 	_ = hashstructure.Hash
