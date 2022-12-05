@@ -8,7 +8,7 @@ EXEC_NAME := $(OUTPUT_DIR)/protoc-gen-ext
 SOURCES := $(shell find . -name "*.go" | grep -v test.go)
 VERSION ?= $(shell git describe --tags)
 
-GO_BUILD_FLAGS := GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64
+GO_BUILD_FLAGS := GO111MODULE=on CGO_ENABLED=0 GOARCH=$(shell uname -m)
 GCFLAGS := 'all=-N -l'
 
 
@@ -44,14 +44,14 @@ GO_IMPORT_SPACES := ${EXT_IMPORT},\
 GO_IMPORT:=$(subst $(space),,$(GO_IMPORT_SPACES))
 
 
-PHONE: generated-code
+.PHONY: generated-code
 generated-code:
-	PATH=$(DEPSGOBIN):$$PATH protoc -I=. --go_out="${EXT_IMPORT}:." extproto/ext.proto
+	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/protoc -I=. -I=./external --go_out="${EXT_IMPORT}:." extproto/ext.proto
 	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/extproto/* extproto
-	PATH=$(DEPSGOBIN):$$PATH protoc -I=. -I=./extproto --go_out="." --ext_out="." tests/api/hello.proto
+	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/protoc -I=. -I=./extproto -I=./external --go_out="." --ext_out="." tests/api/hello.proto
 	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/tests/api/* tests/api/
 	PATH=$(DEPSGOBIN):$$PATH rm -rf github.com
-	PATH=$(DEPSGOBIN):$$PATH goimports -w .
+	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/goimports -w .
 
 
 DEPSGOBIN=$(shell pwd)/_output/.bin
@@ -60,12 +60,39 @@ DEPSGOBIN=$(shell pwd)/_output/.bin
 .PHONY: install-go-tools
 install-go-tools: install
 	mkdir -p $(DEPSGOBIN)
-	GOBIN=$(DEPSGOBIN) go install github.com/golang/protobuf/protoc-gen-go
-	GOBIN=$(DEPSGOBIN) go install golang.org/x/tools/cmd/goimports
-	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo
+	GOBIN=$(DEPSGOBIN) go install github.com/golang/protobuf/protoc-gen-go@v1.5.2
+	GOBIN=$(DEPSGOBIN) go install golang.org/x/tools/cmd/goimports@v0.1.2
+	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo@v1.16.5
+
+# proto compiler installation
+PROTOC_URL:=https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protoc-3.15.8
+.PHONY: install-protoc
+install-protoc:
+ifeq ($(shell uname),Darwin)
+	@echo downloading protoc for osx
+	wget $(PROTOC_URL)-osx-x86_64.zip -O $(DEPSGOBIN)/protoc-3.15.8.zip
+else
+ifeq ($(shell uname -m),aarch64)
+	@echo downloading protoc for linux aarch64
+	wget $(PROTOC_URL)-linux-aarch_64.zip -O $(DEPSGOBIN)/protoc-3.15.8.zip
+else
+	@echo downloading protoc for linux x86-64
+	wget $(PROTOC_URL)-linux-x86_64.zip -O $(DEPSGOBIN)/protoc-3.15.8.zip
+endif
+endif
+
+	unzip $(DEPSGOBIN)/protoc-3.15.8.zip -d $(DEPSGOBIN)/protoc-3.15.8
+	mv $(DEPSGOBIN)/protoc-3.15.8/bin/protoc $(DEPSGOBIN)/protoc
+	chmod +x $(DEPSGOBIN)/protoc
+	rm -rf $(DEPSGOBIN)/protoc-3.15.8 $(DEPSGOBIN)/protoc-3.15.8.zip
+
+	# manage google protos too, since we have a folder of them based on the protoc version
+
+.PHONY: install-tools
+install-tools: install-go-tools install-protoc
 
 .PHONY: run-tests
-run-tests: install-go-tools
+run-tests: install-tools
 	$(DEPSGOBIN)/ginkgo -r -failFast -trace -progress -race -compilers=4 -failOnPending -noColor $(TEST_PKG)
 
 $(EXEC_NAME):
