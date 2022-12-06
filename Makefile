@@ -60,9 +60,9 @@ DEPSGOBIN=$(shell pwd)/_output/.bin
 .PHONY: install-go-tools
 install-go-tools: install
 	mkdir -p $(DEPSGOBIN)
-	GOBIN=$(DEPSGOBIN) go install github.com/golang/protobuf/protoc-gen-go@v1.5.2
-	GOBIN=$(DEPSGOBIN) go install golang.org/x/tools/cmd/goimports@v0.1.2
-	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo@v1.16.5
+	GOBIN=$(DEPSGOBIN) go install github.com/golang/protobuf/protoc-gen-go
+	GOBIN=$(DEPSGOBIN) go install golang.org/x/tools/cmd/goimports
+	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo
 
 # proto compiler installation
 PROTOC_URL:=https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protoc-3.15.8

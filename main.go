@@ -1,6 +1,7 @@
 package main
 
 import (
+	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"google.golang.org/protobuf/types/pluginpb"
 
@@ -8,8 +9,6 @@ import (
 	"github.com/solo-io/protoc-gen-ext/module/equal"
 	"github.com/solo-io/protoc-gen-ext/module/hash"
 	"github.com/solo-io/protoc-gen-ext/module/merge"
-
-	pgs "github.com/lyft/protoc-gen-star"
 )
 
 func main() {
