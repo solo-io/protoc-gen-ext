@@ -43,6 +43,86 @@ func (m *Simple) Merge(overrides *Simple) {
 
 	m.IntSkipped = overrides.IntSkipped
 
+	if overrides.StrOptional != nil {
+		v := overrides.GetStrOptional()
+		m.StrOptional = &v
+	}
+
+	if overrides.TestUint32Optional != nil {
+		v := overrides.GetTestUint32Optional()
+		m.TestUint32Optional = &v
+	}
+
+	if overrides.TestUint64Optional != nil {
+		v := overrides.GetTestUint64Optional()
+		m.TestUint64Optional = &v
+	}
+
+	if overrides.TestBoolOptional != nil {
+		v := overrides.GetTestBoolOptional()
+		m.TestBoolOptional = &v
+	}
+
+	if overrides.DoubleTestOptional != nil {
+		v := overrides.GetDoubleTestOptional()
+		m.DoubleTestOptional = &v
+	}
+
+	if overrides.FloatTestOptional != nil {
+		v := overrides.GetFloatTestOptional()
+		m.FloatTestOptional = &v
+	}
+
+	if overrides.Int32TestOptional != nil {
+		v := overrides.GetInt32TestOptional()
+		m.Int32TestOptional = &v
+	}
+
+	if overrides.Int64TestOptional != nil {
+		v := overrides.GetInt64TestOptional()
+		m.Int64TestOptional = &v
+	}
+
+	if overrides.Sint32TestOptional != nil {
+		v := overrides.GetSint32TestOptional()
+		m.Sint32TestOptional = &v
+	}
+
+	if overrides.Sint64TestOptional != nil {
+		v := overrides.GetSint64TestOptional()
+		m.Sint64TestOptional = &v
+	}
+
+	if overrides.Fixed32TestOptional != nil {
+		v := overrides.GetFixed32TestOptional()
+		m.Fixed32TestOptional = &v
+	}
+
+	if overrides.Fixed64TestOptional != nil {
+		v := overrides.GetFixed64TestOptional()
+		m.Fixed64TestOptional = &v
+	}
+
+	if overrides.Sfixed32TestOptional != nil {
+		v := overrides.GetSfixed32TestOptional()
+		m.Sfixed32TestOptional = &v
+	}
+
+	if overrides.Sfixed64TestOptional != nil {
+		v := overrides.GetSfixed64TestOptional()
+		m.Sfixed64TestOptional = &v
+	}
+
+	if overrides.StrSkippedOptional != nil {
+		v := overrides.GetStrSkippedOptional()
+		m.StrSkippedOptional = &v
+	}
+
+	if overrides.IntSkippedOptional != nil {
+		v := overrides.GetIntSkippedOptional()
+		m.IntSkippedOptional = &v
+	}
+
 }
 
 // Merge non-nil fields from overrides into m

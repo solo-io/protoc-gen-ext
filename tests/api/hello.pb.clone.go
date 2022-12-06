@@ -72,6 +72,86 @@ func (m *Simple) Clone() proto.Message {
 
 	target.IntSkipped = m.GetIntSkipped()
 
+	if m.StrOptional != nil {
+		v := m.GetStrOptional()
+		target.StrOptional = &v
+	}
+
+	if m.TestUint32Optional != nil {
+		v := m.GetTestUint32Optional()
+		target.TestUint32Optional = &v
+	}
+
+	if m.TestUint64Optional != nil {
+		v := m.GetTestUint64Optional()
+		target.TestUint64Optional = &v
+	}
+
+	if m.TestBoolOptional != nil {
+		v := m.GetTestBoolOptional()
+		target.TestBoolOptional = &v
+	}
+
+	if m.DoubleTestOptional != nil {
+		v := m.GetDoubleTestOptional()
+		target.DoubleTestOptional = &v
+	}
+
+	if m.FloatTestOptional != nil {
+		v := m.GetFloatTestOptional()
+		target.FloatTestOptional = &v
+	}
+
+	if m.Int32TestOptional != nil {
+		v := m.GetInt32TestOptional()
+		target.Int32TestOptional = &v
+	}
+
+	if m.Int64TestOptional != nil {
+		v := m.GetInt64TestOptional()
+		target.Int64TestOptional = &v
+	}
+
+	if m.Sint32TestOptional != nil {
+		v := m.GetSint32TestOptional()
+		target.Sint32TestOptional = &v
+	}
+
+	if m.Sint64TestOptional != nil {
+		v := m.GetSint64TestOptional()
+		target.Sint64TestOptional = &v
+	}
+
+	if m.Fixed32TestOptional != nil {
+		v := m.GetFixed32TestOptional()
+		target.Fixed32TestOptional = &v
+	}
+
+	if m.Fixed64TestOptional != nil {
+		v := m.GetFixed64TestOptional()
+		target.Fixed64TestOptional = &v
+	}
+
+	if m.Sfixed32TestOptional != nil {
+		v := m.GetSfixed32TestOptional()
+		target.Sfixed32TestOptional = &v
+	}
+
+	if m.Sfixed64TestOptional != nil {
+		v := m.GetSfixed64TestOptional()
+		target.Sfixed64TestOptional = &v
+	}
+
+	if m.StrSkippedOptional != nil {
+		v := m.GetStrSkippedOptional()
+		target.StrSkippedOptional = &v
+	}
+
+	if m.IntSkippedOptional != nil {
+		v := m.GetIntSkippedOptional()
+		target.IntSkippedOptional = &v
+	}
+
 	return target
 }
 
