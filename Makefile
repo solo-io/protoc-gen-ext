@@ -84,15 +84,16 @@ endif
 	unzip $(DEPSGOBIN)/protoc-3.15.8.zip -d $(DEPSGOBIN)/protoc-3.15.8
 	mv $(DEPSGOBIN)/protoc-3.15.8/bin/protoc $(DEPSGOBIN)/protoc
 	chmod +x $(DEPSGOBIN)/protoc
+	@echo manage google protos too, since we have a folder of them based on the protoc version
+	rm -Rf $(shell pwd)/external/google/protobuf/*
+	mv $(DEPSGOBIN)/protoc-3.15.8/include/google/protobuf/*.proto $(shell pwd)/external/google/protobuf
 	rm -rf $(DEPSGOBIN)/protoc-3.15.8 $(DEPSGOBIN)/protoc-3.15.8.zip
-
-	# manage google protos too, since we have a folder of them based on the protoc version
 
 .PHONY: install-tools
 install-tools: install-go-tools install-protoc
 
 .PHONY: run-tests
-run-tests: install-tools
+run-tests:
 	$(DEPSGOBIN)/ginkgo -r -failFast -trace -progress -race -compilers=4 -failOnPending -noColor $(TEST_PKG)
 
 $(EXEC_NAME):
