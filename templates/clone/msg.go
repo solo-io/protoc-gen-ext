@@ -13,7 +13,14 @@ func (m {{ (msgTyp .).Pointer }}) Clone() proto.Message {
 			{{ render . }}
 		{{ end }}
 
-		{{ range .OneOfs }}
+		{{ range .SyntheticOneOfFields }}
+		if m.{{ name . }} != nil {
+			v := m.Get{{ name . }}()
+			target.{{ name . }} = &v
+		}
+		{{ end }}
+
+		{{ range .RealOneOfs }}
 			switch m.{{ name . }}.(type) {
 				{{ $oneOfInterface := name .}}
 				{{ range .Fields }}

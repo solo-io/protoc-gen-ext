@@ -34,6 +34,24 @@ message Simple {
     string str_skipped = 16 [(extproto.skip_hashing) = true];
     uint32 int_skipped = 17 [(extproto.skip_hashing) = true];
 
+    optional string strOptional = 18;
+    optional uint32 testUint32Optional = 19;
+    optional uint64 testUint64Optional = 20;
+    optional bool testBoolOptional = 21;
+    optional double doubleTestOptional = 22;
+    optional float floatTestOptional = 23;
+    optional int32 int32TestOptional = 24;
+    optional int64 int64TestOptional = 25;
+    optional sint32 sint32TestOptional = 26;
+    optional sint64 sint64TestOptional = 27;
+    optional fixed32 fixed32TestOptional = 28;
+    optional fixed64 fixed64TestOptional = 29;
+    optional sfixed32 sfixed32TestOptional = 30;
+    optional sfixed64 sfixed64TestOptional = 31;
+
+    // skipped primitives
+    optional string str_skippedOptional = 32 [(extproto.skip_hashing) = true];
+    optional uint32 int_skippedOptional = 33 [(extproto.skip_hashing) = true];
 }
 
 enum Test {
@@ -44,19 +62,19 @@ enum Test {
 message Nested {
     Simple simple = 1;
 
-    Simple other_simple = 14;
+    Simple other_simple = 2;
 
-    Test test = 2;
+    Test test = 3;
 
-    Empty empty = 3 [(extproto.sensitive) = true];
+    Empty empty = 4 [(extproto.sensitive) = true];
 
-    repeated string hello = 4;
+    repeated string hello = 5;
 
-    google.protobuf.Struct details = 5;
+    google.protobuf.Struct details = 6;
 
-    Simple skipper = 6 [(extproto.skip_hashing) = true];
+    Simple skipper = 7 [(extproto.skip_hashing) = true];
 
-    repeated Simple x = 7 [(extproto.sensitive) = true];
+    repeated Simple x = 8 [(extproto.sensitive) = true];
 
     map<string, Simple> initial = 9;
 
@@ -65,15 +83,15 @@ message Nested {
     oneof test_one_of {
         Empty empty_one_of = 11;
         NestedEmpty nested_one_of = 12;
-        string primitive_one_of = 15;
-        bytes bytes_one_of = 16;
+        string primitive_one_of = 13;
+        bytes bytes_one_of = 14;
     }
 
-    repeated uint64 repeated_primitive = 13;
+    repeated uint64 repeated_primitive = 15;
 
-    repeated google.protobuf.Struct repeated_external = 17;
+    repeated google.protobuf.Struct repeated_external = 16;
 
-    map <string, google.protobuf.Struct> map_external = 18;
+    map <string, google.protobuf.Struct> map_external = 17;
 }
 
 

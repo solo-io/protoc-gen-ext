@@ -13,7 +13,7 @@ import (
 	"github.com/solo-io/protoc-gen-ext/pkg/clone"
 	"google.golang.org/protobuf/proto"
 
-	github_com_golang_protobuf_ptypes_struct "github.com/golang/protobuf/ptypes/struct"
+	google_golang_org_protobuf_types_known_structpb "google.golang.org/protobuf/types/known/structpb"
 )
 
 // ensure the imports are used
@@ -72,6 +72,86 @@ func (m *Simple) Clone() proto.Message {
 
 	target.IntSkipped = m.GetIntSkipped()
 
+	if m.StrOptional != nil {
+		v := m.GetStrOptional()
+		target.StrOptional = &v
+	}
+
+	if m.TestUint32Optional != nil {
+		v := m.GetTestUint32Optional()
+		target.TestUint32Optional = &v
+	}
+
+	if m.TestUint64Optional != nil {
+		v := m.GetTestUint64Optional()
+		target.TestUint64Optional = &v
+	}
+
+	if m.TestBoolOptional != nil {
+		v := m.GetTestBoolOptional()
+		target.TestBoolOptional = &v
+	}
+
+	if m.DoubleTestOptional != nil {
+		v := m.GetDoubleTestOptional()
+		target.DoubleTestOptional = &v
+	}
+
+	if m.FloatTestOptional != nil {
+		v := m.GetFloatTestOptional()
+		target.FloatTestOptional = &v
+	}
+
+	if m.Int32TestOptional != nil {
+		v := m.GetInt32TestOptional()
+		target.Int32TestOptional = &v
+	}
+
+	if m.Int64TestOptional != nil {
+		v := m.GetInt64TestOptional()
+		target.Int64TestOptional = &v
+	}
+
+	if m.Sint32TestOptional != nil {
+		v := m.GetSint32TestOptional()
+		target.Sint32TestOptional = &v
+	}
+
+	if m.Sint64TestOptional != nil {
+		v := m.GetSint64TestOptional()
+		target.Sint64TestOptional = &v
+	}
+
+	if m.Fixed32TestOptional != nil {
+		v := m.GetFixed32TestOptional()
+		target.Fixed32TestOptional = &v
+	}
+
+	if m.Fixed64TestOptional != nil {
+		v := m.GetFixed64TestOptional()
+		target.Fixed64TestOptional = &v
+	}
+
+	if m.Sfixed32TestOptional != nil {
+		v := m.GetSfixed32TestOptional()
+		target.Sfixed32TestOptional = &v
+	}
+
+	if m.Sfixed64TestOptional != nil {
+		v := m.GetSfixed64TestOptional()
+		target.Sfixed64TestOptional = &v
+	}
+
+	if m.StrSkippedOptional != nil {
+		v := m.GetStrSkippedOptional()
+		target.StrSkippedOptional = &v
+	}
+
+	if m.IntSkippedOptional != nil {
+		v := m.GetIntSkippedOptional()
+		target.IntSkippedOptional = &v
+	}
+
 	return target
 }
 
@@ -113,9 +193,9 @@ func (m *Nested) Clone() proto.Message {
 	}
 
 	if h, ok := interface{}(m.GetDetails()).(clone.Cloner); ok {
-		target.Details = h.Clone().(*github_com_golang_protobuf_ptypes_struct.Struct)
+		target.Details = h.Clone().(*google_golang_org_protobuf_types_known_structpb.Struct)
 	} else {
-		target.Details = proto.Clone(m.GetDetails()).(*github_com_golang_protobuf_ptypes_struct.Struct)
+		target.Details = proto.Clone(m.GetDetails()).(*google_golang_org_protobuf_types_known_structpb.Struct)
 	}
 
 	if h, ok := interface{}(m.GetSkipper()).(clone.Cloner); ok {
@@ -169,26 +249,26 @@ func (m *Nested) Clone() proto.Message {
 	}
 
 	if m.GetRepeatedExternal() != nil {
-		target.RepeatedExternal = make([]*github_com_golang_protobuf_ptypes_struct.Struct, len(m.GetRepeatedExternal()))
+		target.RepeatedExternal = make([]*google_golang_org_protobuf_types_known_structpb.Struct, len(m.GetRepeatedExternal()))
 		for idx, v := range m.GetRepeatedExternal() {
 
 			if h, ok := interface{}(v).(clone.Cloner); ok {
-				target.RepeatedExternal[idx] = h.Clone().(*github_com_golang_protobuf_ptypes_struct.Struct)
+				target.RepeatedExternal[idx] = h.Clone().(*google_golang_org_protobuf_types_known_structpb.Struct)
 			} else {
-				target.RepeatedExternal[idx] = proto.Clone(v).(*github_com_golang_protobuf_ptypes_struct.Struct)
+				target.RepeatedExternal[idx] = proto.Clone(v).(*google_golang_org_protobuf_types_known_structpb.Struct)
 			}
 
 		}
 	}
 
 	if m.GetMapExternal() != nil {
-		target.MapExternal = make(map[string]*github_com_golang_protobuf_ptypes_struct.Struct, len(m.GetMapExternal()))
+		target.MapExternal = make(map[string]*google_golang_org_protobuf_types_known_structpb.Struct, len(m.GetMapExternal()))
 		for k, v := range m.GetMapExternal() {
 
 			if h, ok := interface{}(v).(clone.Cloner); ok {
-				target.MapExternal[k] = h.Clone().(*github_com_golang_protobuf_ptypes_struct.Struct)
+				target.MapExternal[k] = h.Clone().(*google_golang_org_protobuf_types_known_structpb.Struct)
 			} else {
-				target.MapExternal[k] = proto.Clone(v).(*github_com_golang_protobuf_ptypes_struct.Struct)
+				target.MapExternal[k] = proto.Clone(v).(*google_golang_org_protobuf_types_known_structpb.Struct)
 			}
 
 		}

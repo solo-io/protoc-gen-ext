@@ -14,7 +14,10 @@ func (m {{ (msgTyp .).Pointer }}) Hash(hasher hash.Hash64) (uint64, error) {
 			{{ render . }}
 		{{ end }}
 
-		{{ range .OneOfs }}
+		{{ range .SyntheticOneOfFields }}
+			{{ render . }}
+		{{ end }}
+		{{ range .RealOneOfs }}
 			switch m.{{ name . }}.(type) {
 				{{ range .Fields }}
 					case {{ oneof . }}:
