@@ -65,6 +65,7 @@ install-go-tools: install
 	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo
 
 # proto compiler installation
+# no explicit arm build, but x86_64 build works on arm macs
 PROTOC_VERSION:=3.15.8
 PROTOC_URL:=https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}
 .PHONY: install-protoc
