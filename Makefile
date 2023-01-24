@@ -8,7 +8,7 @@ EXEC_NAME := $(OUTPUT_DIR)/protoc-gen-ext
 SOURCES := $(shell find . -name "*.go" | grep -v test.go)
 VERSION ?= $(shell git describe --tags)
 
-GO_BUILD_FLAGS := GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64
+GO_BUILD_FLAGS := GO111MODULE=on CGO_ENABLED=0
 GCFLAGS := 'all=-N -l'
 
 
@@ -44,14 +44,14 @@ GO_IMPORT_SPACES := ${EXT_IMPORT},\
 GO_IMPORT:=$(subst $(space),,$(GO_IMPORT_SPACES))
 
 
-PHONE: generated-code
+.PHONY: generated-code
 generated-code:
-	PATH=$(DEPSGOBIN):$$PATH protoc -I=. --go_out="${EXT_IMPORT}:." extproto/ext.proto
+	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/protoc -I=. -I=./external --go_out="${EXT_IMPORT}:." extproto/ext.proto
 	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/extproto/* extproto
-	PATH=$(DEPSGOBIN):$$PATH protoc -I=. -I=./extproto --go_out="." --ext_out="." tests/api/hello.proto
+	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/protoc -I=. -I=./extproto -I=./external --go_out="." --ext_out="." tests/api/hello.proto
 	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/tests/api/* tests/api/
 	PATH=$(DEPSGOBIN):$$PATH rm -rf github.com
-	PATH=$(DEPSGOBIN):$$PATH goimports -w .
+	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/goimports -w .
 
 
 DEPSGOBIN=$(shell pwd)/_output/.bin
@@ -64,8 +64,39 @@ install-go-tools: install
 	GOBIN=$(DEPSGOBIN) go install golang.org/x/tools/cmd/goimports
 	GOBIN=$(DEPSGOBIN) go install github.com/onsi/ginkgo/ginkgo
 
+# proto compiler installation
+# no explicit arm build, but x86_64 build works on arm macs
+PROTOC_VERSION:=3.15.8
+PROTOC_URL:=https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}
+.PHONY: install-protoc
+install-protoc:
+	if [ $(shell ${DEPSGOBIN}/protoc --version | grep -c ${PROTOC_VERSION}) -ne 0 ]; then \
+		echo expected protoc version ${PROTOC_VERSION} already installed ;\
+	else \
+		if [ "$(shell uname)" == "Darwin" ]; then \
+			echo "downloading protoc for osx" ;\
+			wget $(PROTOC_URL)-osx-x86_64.zip -O $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip ;\
+		elif [ "$(shell uname -m)" == "aarch64" ]; then \
+			echo "downloading protoc for linux aarch64" ;\
+			wget $(PROTOC_URL)-linux-aarch_64.zip -O $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip ;\
+		else \
+			echo "downloading protoc for linux x86-64" ;\
+			wget $(PROTOC_URL)-linux-x86_64.zip -O $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip ;\
+		fi ;\
+		unzip $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip -d $(DEPSGOBIN)/protoc-${PROTOC_VERSION} ;\
+		mv $(DEPSGOBIN)/protoc-${PROTOC_VERSION}/bin/protoc $(DEPSGOBIN)/protoc ;\
+		chmod +x $(DEPSGOBIN)/protoc ;\
+		@echo manage google protos too, since we have a folder of them based on the protoc version ;\
+		rm -Rf $(shell pwd)/external/google/protobuf/* ;\
+		mv $(DEPSGOBIN)/protoc-${PROTOC_VERSION}/include/google/protobuf/*.proto $(shell pwd)/external/google/protobuf ;\
+		rm -rf $(DEPSGOBIN)/protoc-${PROTOC_VERSION} $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip ;\
+	fi
+
+.PHONY: install-tools
+install-tools: install-go-tools install-protoc
+
 .PHONY: run-tests
-run-tests: install-go-tools
+run-tests:
 	$(DEPSGOBIN)/ginkgo -r -failFast -trace -progress -race -compilers=4 -failOnPending -noColor $(TEST_PKG)
 
 $(EXEC_NAME):
