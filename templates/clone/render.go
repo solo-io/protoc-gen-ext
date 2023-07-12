@@ -3,6 +3,7 @@ package clone
 import (
 	"bytes"
 	"errors"
+	"strings"
 	"text/template"
 
 	pgs "github.com/lyft/protoc-gen-star"
@@ -38,8 +39,12 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
-			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 			typeName = fns.typeName(field)
+			if strings.HasPrefix(typeName, "*k8s_io_") {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageGogoTpl))
+			} else {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
+			}
 		default:
 			return "", errors.New("unknown type")
 		}
@@ -158,8 +163,12 @@ func (fns goSharedFuncs) simpleRender(
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
-			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 			typeName = fns.entityTypeName(field, typeElem)
+			if strings.HasPrefix(typeName, "*k8s_io_") {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageGogoTpl))
+			} else {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
+			}
 		default:
 			return "", errors.New("unknown type")
 		}

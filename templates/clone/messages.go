@@ -8,6 +8,10 @@ const messageTpl = `
 		}
 `
 
+const messageGogoTpl = `
+		{{ .TargetName }} = {{ .Name }}.DeepCopy()
+`
+
 const oneofMessageTpl = `
 		if h, ok := interface{}({{ .Name }}).(clone.Cloner); ok {
 			target.{{ .OneOfInterface }} = &{{ oneofNonPointer .Field }}{
