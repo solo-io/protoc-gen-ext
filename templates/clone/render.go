@@ -3,10 +3,14 @@ package clone
 import (
 	"bytes"
 	"errors"
+	"strings"
 	"text/template"
 
 	pgs "github.com/lyft/protoc-gen-star"
 )
+
+// packages that use k8s/gogo and require DeepCopy because they do not support proto.Clone or Reflect
+var gogoPackagesParamName = "gogo_packages"
 
 type Value struct {
 	Name           string
@@ -38,8 +42,13 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
-			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 			typeName = fns.typeName(field)
+			packageName := fns.fieldPackageName(field)
+			if fns.contains(strings.Split(fns.Params().Str(gogoPackagesParamName), "|"), packageName) {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageGogoTpl))
+			} else {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
+			}
 		default:
 			return "", errors.New("unknown type")
 		}
@@ -158,8 +167,13 @@ func (fns goSharedFuncs) simpleRender(
 		case pgs.StringT:
 			tpl = template.Must(fns.tpl.New("string").Parse(stringTpl))
 		case pgs.MessageT:
-			tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
 			typeName = fns.entityTypeName(field, typeElem)
+			packageName := fns.fieldPackageName(field)
+			if fns.contains(strings.Split(fns.Params().Str(gogoPackagesParamName), "|"), packageName) {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageGogoTpl))
+			} else {
+				tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
+			}
 		default:
 			return "", errors.New("unknown type")
 		}

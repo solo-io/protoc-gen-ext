@@ -90,6 +90,18 @@ func (fns goSharedFuncs) importableTypeName(f pgs.Field, e pgs.Entity) string {
 	return fmt.Sprintf("*%s.%s", fns.packageName(e), t)
 }
 
+func (fns goSharedFuncs) fieldPackageName(field pgs.Field) string {
+	if field.Type().IsMap() || field.Type().IsRepeated() {
+		if field.Type().Element().IsEmbed() {
+			e := field.Type().Element().Embed()
+			return fns.packageName(e)
+		}
+	}
+
+	return fns.packageName(field.Type().Embed())
+
+}
+
 func (fns goSharedFuncs) packageName(e pgs.Entity) string {
 	importName := fns.ImportPath(e).String()
 	importName = strings.ReplaceAll(importName, "/", "_")
@@ -214,4 +226,13 @@ func (fns goSharedFuncs) externalPackages(
 
 func (fns goSharedFuncs) snakeCase(name string) string {
 	return strcase.ToSnake(name)
+}
+
+func (fns goSharedFuncs) contains(strings []string, s string) bool {
+	for _, str := range strings {
+		if str == s {
+			return true
+		}
+	}
+	return false
 }
