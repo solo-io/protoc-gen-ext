@@ -3,15 +3,14 @@ package clone
 import (
 	"bytes"
 	"errors"
+	"strings"
 	"text/template"
 
 	pgs "github.com/lyft/protoc-gen-star"
 )
 
 // packages that use k8s/gogo and require DeepCopy because they do not support proto.Clone or Reflect
-var gogoPackages = []string{
-	"k8s_io_api_core_v1",
-}
+var gogoPackagesParamName = "gogo_packages"
 
 type Value struct {
 	Name           string
@@ -45,7 +44,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 		case pgs.MessageT:
 			typeName = fns.typeName(field)
 			packageName := fns.fieldPackageName(field)
-			if fns.contains(gogoPackages, packageName) {
+			if fns.contains(strings.Split(fns.Params().Str(gogoPackagesParamName), "|"), packageName) {
 				tpl = template.Must(fns.tpl.New("message").Parse(messageGogoTpl))
 			} else {
 				tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
@@ -170,7 +169,7 @@ func (fns goSharedFuncs) simpleRender(
 		case pgs.MessageT:
 			typeName = fns.entityTypeName(field, typeElem)
 			packageName := fns.fieldPackageName(field)
-			if fns.contains(gogoPackages, packageName) {
+			if fns.contains(strings.Split(fns.Params().Str(gogoPackagesParamName), "|"), packageName) {
 				tpl = template.Must(fns.tpl.New("message").Parse(messageGogoTpl))
 			} else {
 				tpl = template.Must(fns.tpl.New("message").Parse(messageTpl))
