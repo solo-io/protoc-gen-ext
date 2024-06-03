@@ -202,3 +202,15 @@ func (m *NestedEmpty) Merge(overrides *NestedEmpty) {
 	}
 
 }
+
+// Merge non-nil fields from overrides into m
+func (m *Strings) Merge(overrides *Strings) {
+	if m == nil || overrides == nil {
+		return
+	}
+
+	m.String1 = overrides.String1
+
+	m.String2 = overrides.String2
+
+}

@@ -352,3 +352,18 @@ func (m *NestedEmpty) Clone() proto.Message {
 
 	return target
 }
+
+// Clone function
+func (m *Strings) Clone() proto.Message {
+	var target *Strings
+	if m == nil {
+		return target
+	}
+	target = &Strings{}
+
+	target.String1 = m.GetString1()
+
+	target.String2 = m.GetString2()
+
+	return target
+}

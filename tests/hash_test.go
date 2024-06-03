@@ -4,6 +4,7 @@ import (
 	_struct "github.com/golang/protobuf/ptypes/struct"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	"github.com/solo-io/protoc-gen-ext/tests/api"
 )
 
@@ -101,6 +102,22 @@ var _ = Describe("hash", func() {
 
 		})
 
+	})
+
+	FIt("should produce different hashes for same key in different place in object", func() {
+		testObject1 := &api.Strings{
+			String1: "test",
+		}
+		testObject2 := &api.Strings{
+			String2: "test",
+		}
+		hash1, err := testObject1.Hash(nil)
+		Expect(err).NotTo(HaveOccurred())
+
+		hash2, err := testObject2.Hash(nil)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(hash1).NotTo(Equal(hash2))
 	})
 
 	Context("complex (nested)", func() {

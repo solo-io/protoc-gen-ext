@@ -557,3 +557,27 @@ func (m *NestedEmpty) Hash(hasher hash.Hash64) (uint64, error) {
 
 	return hasher.Sum64(), nil
 }
+
+// Hash function
+func (m *Strings) Hash(hasher hash.Hash64) (uint64, error) {
+	if m == nil {
+		return 0, nil
+	}
+	if hasher == nil {
+		hasher = fnv.New64()
+	}
+	var err error
+	if _, err = hasher.Write([]byte("envoy.type.github.com/solo-io/protoc-gen-ext/tests/api.Strings")); err != nil {
+		return 0, err
+	}
+
+	if _, err = hasher.Write([]byte(m.GetString1())); err != nil {
+		return 0, err
+	}
+
+	if _, err = hasher.Write([]byte(m.GetString2())); err != nil {
+		return 0, err
+	}
+
+	return hasher.Sum64(), nil
+}

@@ -586,3 +586,35 @@ func (m *NestedEmpty) Equal(that interface{}) bool {
 
 	return true
 }
+
+// Equal function
+func (m *Strings) Equal(that interface{}) bool {
+	if that == nil {
+		return m == nil
+	}
+
+	target, ok := that.(*Strings)
+	if !ok {
+		that2, ok := that.(Strings)
+		if ok {
+			target = &that2
+		} else {
+			return false
+		}
+	}
+	if target == nil {
+		return m == nil
+	} else if m == nil {
+		return false
+	}
+
+	if strings.Compare(m.GetString1(), target.GetString1()) != 0 {
+		return false
+	}
+
+	if strings.Compare(m.GetString2(), target.GetString2()) != 0 {
+		return false
+	}
+
+	return true
+}
