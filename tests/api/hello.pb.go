@@ -391,6 +391,7 @@ type Nested struct {
 	Initial     map[string]*Simple `protobuf:"bytes,9,rep,name=initial,proto3" json:"initial,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	SimpleMap   map[string]string  `protobuf:"bytes,10,rep,name=simple_map,json=simpleMap,proto3" json:"simple_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Types that are assignable to TestOneOf:
+	//
 	//	*Nested_EmptyOneOf
 	//	*Nested_NestedOneOf
 	//	*Nested_PrimitiveOneOf
