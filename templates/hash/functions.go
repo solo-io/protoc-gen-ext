@@ -11,6 +11,8 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 )
 
+const HASH_FULL_PACKAGE_NAME_TRANSFORM_PARAMETER_NAME = "transform_package_for_hash"
+
 func register(tpl *template.Template, params pgs.Parameters) {
 	fns := goSharedFuncs{
 		Context: pgsgo.InitContext(params),
@@ -18,7 +20,7 @@ func register(tpl *template.Template, params pgs.Parameters) {
 	}
 
 	tpl.Funcs(map[string]interface{}{
-		"fullPackageName": fns.fullPackageName,
+		"fullPackageName": fns.makeFullPackageNameFunc(params),
 		"snakeCase":       fns.snakeCase,
 		"cmt":             pgs.C80,
 		"isBytes":         fns.isBytes,
@@ -50,6 +52,27 @@ func (fns goSharedFuncs) pointerAccessor(field pgs.Field) string {
 
 func (fns goSharedFuncs) fieldName(field pgs.Field) string {
 	return fmt.Sprintf("%s", fns.Name(field))
+}
+
+// makeFullPackageNameFunc returns a function that returns the full package name of a message
+// If the parameter transform_package_for_hash is set, using the format "old=new", the function will replace all instances of "old" with "new" in the full package name
+// If the parameter transform_package_for_hash is not set, the function will return the full package name as is
+func (fns goSharedFuncs) makeFullPackageNameFunc(params pgs.Parameters) func(pgs.Message) string {
+	transformPackageForHash := params.Str(HASH_FULL_PACKAGE_NAME_TRANSFORM_PARAMETER_NAME)
+	if transformPackageForHash == "" {
+		return fns.fullPackageName
+	}
+
+	replaceParts := strings.Split(transformPackageForHash, "=")
+	if len(replaceParts) != 2 {
+		fmt.Printf("WARNING: Ingoring invalid transform string: %s\n", transformPackageForHash)
+		return fns.fullPackageName
+	}
+
+	return func(msg pgs.Message) string {
+		fullPackageName := fmt.Sprintf("%s.%s.%s", msg.Package().ProtoName(), fns.ImportPath(msg), fns.Name(msg))
+		return strings.ReplaceAll(fullPackageName, replaceParts[0], replaceParts[1])
+	}
 }
 
 func (fns goSharedFuncs) fullPackageName(msg pgs.Message) string {
