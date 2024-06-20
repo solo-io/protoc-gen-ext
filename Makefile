@@ -8,7 +8,7 @@ EXEC_NAME := $(OUTPUT_DIR)/protoc-gen-ext
 SOURCES := $(shell find . -name "*.go" | grep -v test.go)
 VERSION ?= $(shell git describe --tags)
 
-GO_BUILD_FLAGS := GO111MODULE=on CGO_ENABLED=0
+GO_BUILD_FLAGS := CGO_ENABLED=0
 GCFLAGS := 'all=-N -l'
 
 
@@ -86,7 +86,7 @@ install-protoc:
 		unzip $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip -d $(DEPSGOBIN)/protoc-${PROTOC_VERSION} ;\
 		mv $(DEPSGOBIN)/protoc-${PROTOC_VERSION}/bin/protoc $(DEPSGOBIN)/protoc ;\
 		chmod +x $(DEPSGOBIN)/protoc ;\
-		@echo manage google protos too, since we have a folder of them based on the protoc version ;\
+	    echo manage google protos too, since we have a folder of them based on the protoc version ;\
 		rm -Rf $(shell pwd)/external/google/protobuf/* ;\
 		mv $(DEPSGOBIN)/protoc-${PROTOC_VERSION}/include/google/protobuf/*.proto $(shell pwd)/external/google/protobuf ;\
 		rm -rf $(DEPSGOBIN)/protoc-${PROTOC_VERSION} $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip ;\

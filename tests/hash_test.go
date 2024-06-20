@@ -2,7 +2,7 @@ package tests
 
 import (
 	_struct "github.com/golang/protobuf/ptypes/struct"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/solo-io/protoc-gen-ext/tests/api"
 )
@@ -245,6 +245,67 @@ var _ = Describe("hash", func() {
 		})
 	})
 
+	Context("Will include field names in the hash", func() {
+		When("multiple fields of same type have the same value", func() {
+			It("should produce different hash values", func() {
+				object1 := &api.MultipleStrings{
+					S1: "hello",
+					S2: "",
+				}
+				object2 := &api.MultipleStrings{
+					S1: "",
+					S2: "hello",
+				}
+				hash1, err := object1.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).NotTo(Equal(hash2))
+			})
+		})
+
+		When("multiple fields of same type have different values", func() {
+			It("should produce different hash values", func() {
+				object1 := &api.MultipleStrings{
+					S1: "hello",
+					S2: "",
+				}
+				object2 := &api.MultipleStrings{
+					S1: "",
+					S2: "world",
+				}
+				hash1, err := object1.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).NotTo(Equal(hash2))
+			})
+		})
+
+		When("two objects are the same", func() {
+			It("should produce the same hash value", func() {
+				object1 := &api.MultipleStrings{
+					S1: "hello",
+					S2: "world",
+				}
+				object2 := &api.MultipleStrings{
+					S1: "hello",
+					S2: "world",
+				}
+				hash1, err := object1.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).To(Equal(hash2))
+			})
+		})
+	})
 })
 
 func allDifferent(hashes []uint64) bool {
