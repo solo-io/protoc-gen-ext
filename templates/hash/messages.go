@@ -33,6 +33,7 @@ const primitiveTmpl = `
 const bytesTpl = `
 		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldName }})); err != nil {
 			return 0, err
+		}
 		if _, err = {{ .Hasher }}.Write({{ .FieldAccessor }}); err != nil {
 			return 0, err
 		}

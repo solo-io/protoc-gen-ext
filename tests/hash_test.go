@@ -2,7 +2,7 @@ package tests
 
 import (
 	_struct "github.com/golang/protobuf/ptypes/struct"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/solo-io/protoc-gen-ext/tests/api"
 )
@@ -247,7 +247,21 @@ var _ = Describe("hash", func() {
 
 	Context("multiple fields of same type, same value", func() {
 		It("will include field names in the hash", func() {
+			object1 := &api.MultipleStrings{
+				S1: "hello",
+				S2: "",
+			}
+			object2 := &api.MultipleStrings{
+				S1: "",
+				S2: "hello",
+			}
+			hash1, err := object1.Hash(nil)
+			Expect(err).NotTo(HaveOccurred())
 
+			hash2, err := object2.Hash(nil)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(hash1).NotTo(Equal(hash2))
 		})
 	})
 })

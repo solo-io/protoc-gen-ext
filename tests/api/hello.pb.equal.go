@@ -586,3 +586,35 @@ func (m *NestedEmpty) Equal(that interface{}) bool {
 
 	return true
 }
+
+// Equal function
+func (m *MultipleStrings) Equal(that interface{}) bool {
+	if that == nil {
+		return m == nil
+	}
+
+	target, ok := that.(*MultipleStrings)
+	if !ok {
+		that2, ok := that.(MultipleStrings)
+		if ok {
+			target = &that2
+		} else {
+			return false
+		}
+	}
+	if target == nil {
+		return m == nil
+	} else if m == nil {
+		return false
+	}
+
+	if strings.Compare(m.GetS1(), target.GetS1()) != 0 {
+		return false
+	}
+
+	if strings.Compare(m.GetS2(), target.GetS2()) != 0 {
+		return false
+	}
+
+	return true
+}
