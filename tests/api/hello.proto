@@ -101,3 +101,8 @@ message Empty {
 message NestedEmpty {
     Nested nested = 1;
 }
+
+message MultipleStrings {
+    string s1 = 1;
+    string s2 = 2;
+}

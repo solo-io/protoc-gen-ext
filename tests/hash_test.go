@@ -245,6 +245,11 @@ var _ = Describe("hash", func() {
 		})
 	})
 
+	Context("multiple fields of same type, same value", func() {
+		It("will include field names in the hash", func() {
+
+		})
+	})
 })
 
 func allDifferent(hashes []uint64) bool {

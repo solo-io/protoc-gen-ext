@@ -86,7 +86,7 @@ install-protoc:
 		unzip $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip -d $(DEPSGOBIN)/protoc-${PROTOC_VERSION} ;\
 		mv $(DEPSGOBIN)/protoc-${PROTOC_VERSION}/bin/protoc $(DEPSGOBIN)/protoc ;\
 		chmod +x $(DEPSGOBIN)/protoc ;\
-		@echo manage google protos too, since we have a folder of them based on the protoc version ;\
+	    echo manage google protos too, since we have a folder of them based on the protoc version ;\
 		rm -Rf $(shell pwd)/external/google/protobuf/* ;\
 		mv $(DEPSGOBIN)/protoc-${PROTOC_VERSION}/include/google/protobuf/*.proto $(shell pwd)/external/google/protobuf ;\
 		rm -rf $(DEPSGOBIN)/protoc-${PROTOC_VERSION} $(DEPSGOBIN)/protoc-${PROTOC_VERSION}.zip ;\

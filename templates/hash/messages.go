@@ -23,17 +23,25 @@ const messageTpl = `
 `
 
 const primitiveTmpl = `
+		if _, err = {{ .Hasher }}.Write({{ .FieldName }}); err != nil {
+			return 0, err
+		}
 		err = binary.Write({{ .Hasher }}, binary.LittleEndian,  {{ .FieldAccessor }} )
 		if err != nil {return 0, err}
 `
 
 const bytesTpl = `
+		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldName }})); err != nil {
+			return 0, err
 		if _, err = {{ .Hasher }}.Write({{ .FieldAccessor }}); err != nil {
 			return 0, err
 		}
 `
 
 const stringTpl = `
+		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldName }})); err != nil {
+			return 0, err
+		}
 		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldAccessor }})); err != nil {
 			return 0, err
 		}
