@@ -9,5 +9,6 @@ require (
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/ginkgo/v2 v2.17.1
 	github.com/onsi/gomega v1.30.0
+	golang.org/x/tools v0.17.0 // indirect
 	google.golang.org/protobuf v1.28.0
 )
