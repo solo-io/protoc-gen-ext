@@ -69,7 +69,13 @@ const mapTpl = `
 `
 
 const repeatedTpl = `
-		for _, v := range {{ .FieldAccessor }} {
+		if _, err = hasher.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
+		for i, v := range {{ .FieldAccessor }} {
+			if _, err = hasher.Write([]byte(strconv.Itoa(i))); err != nil {
+				return 0, err
+			}
 			{{ .InnerTemplates.Value }}
 		}
 `

@@ -618,3 +618,49 @@ func (m *MultipleStrings) Equal(that interface{}) bool {
 
 	return true
 }
+
+// Equal function
+func (m *Repeated) Equal(that interface{}) bool {
+	if that == nil {
+		return m == nil
+	}
+
+	target, ok := that.(*Repeated)
+	if !ok {
+		that2, ok := that.(Repeated)
+		if ok {
+			target = &that2
+		} else {
+			return false
+		}
+	}
+	if target == nil {
+		return m == nil
+	} else if m == nil {
+		return false
+	}
+
+	if len(m.GetFirst()) != len(target.GetFirst()) {
+		return false
+	}
+	for idx, v := range m.GetFirst() {
+
+		if strings.Compare(v, target.GetFirst()[idx]) != 0 {
+			return false
+		}
+
+	}
+
+	if len(m.GetSecond()) != len(target.GetSecond()) {
+		return false
+	}
+	for idx, v := range m.GetSecond() {
+
+		if strings.Compare(v, target.GetSecond()[idx]) != 0 {
+			return false
+		}
+
+	}
+
+	return true
+}

@@ -106,3 +106,8 @@ message MultipleStrings {
     string s1 = 1;
     string s2 = 2;
 }
+
+message Repeated {
+    repeated string first = 1;
+    repeated string second = 2;
+}

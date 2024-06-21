@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"hash"
 	"hash/fnv"
+	"strconv"
 
 	"github.com/solo-io/protoc-gen-ext/pkg/hasher/hashstructure"
 	safe_hasher "github.com/solo-io/protoc-gen-ext/pkg/hasher"

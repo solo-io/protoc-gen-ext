@@ -245,7 +245,7 @@ var _ = Describe("hash", func() {
 		})
 	})
 
-	Context("Will include field names in the hash", func() {
+	Context("Hashing object values of same type", func() {
 		When("multiple fields of same type have the same value", func() {
 			It("should produce different hash values", func() {
 				object1 := &api.MultipleStrings{
@@ -303,6 +303,26 @@ var _ = Describe("hash", func() {
 				Expect(err).NotTo(HaveOccurred())
 
 				Expect(hash1).To(Equal(hash2))
+			})
+		})
+
+		When("two objects have different repeated fields of the same type with the same values", func() {
+			It("should produce different hash values", func() {
+				object1 := &api.Repeated{
+					First: []string{"hello", "world"},
+				}
+
+				object2 := &api.Repeated{
+					Second: []string{"hello", "world"},
+				}
+
+				hash1, err := object1.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).NotTo(Equal(hash2))
 			})
 		})
 	})

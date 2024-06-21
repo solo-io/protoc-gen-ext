@@ -728,6 +728,61 @@ func (x *MultipleStrings) GetS2() string {
 	return ""
 }
 
+type Repeated struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	First  []string `protobuf:"bytes,1,rep,name=first,proto3" json:"first,omitempty"`
+	Second []string `protobuf:"bytes,2,rep,name=second,proto3" json:"second,omitempty"`
+}
+
+func (x *Repeated) Reset() {
+	*x = Repeated{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_tests_api_hello_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Repeated) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Repeated) ProtoMessage() {}
+
+func (x *Repeated) ProtoReflect() protoreflect.Message {
+	mi := &file_tests_api_hello_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Repeated.ProtoReflect.Descriptor instead.
+func (*Repeated) Descriptor() ([]byte, []int) {
+	return file_tests_api_hello_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Repeated) GetFirst() []string {
+	if x != nil {
+		return x.First
+	}
+	return nil
+}
+
+func (x *Repeated) GetSecond() []string {
+	if x != nil {
+		return x.Second
+	}
+	return nil
+}
+
 var File_tests_api_hello_proto protoreflect.FileDescriptor
 
 var file_tests_api_hello_proto_rawDesc = []byte{
@@ -924,13 +979,17 @@ var file_tests_api_hello_proto_rawDesc = []byte{
 	0x22, 0x31, 0x0a, 0x0f, 0x4d, 0x75, 0x6c, 0x74, 0x69, 0x70, 0x6c, 0x65, 0x53, 0x74, 0x72, 0x69,
 	0x6e, 0x67, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x73, 0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x02, 0x73, 0x31, 0x12, 0x0e, 0x0a, 0x02, 0x73, 0x32, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x02, 0x73, 0x32, 0x2a, 0x1c, 0x0a, 0x04, 0x54, 0x65, 0x73, 0x74, 0x12, 0x09, 0x0a, 0x05, 0x48,
-	0x45, 0x4c, 0x4c, 0x4f, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x57, 0x4f, 0x52, 0x4c, 0x44, 0x10,
-	0x01, 0x42, 0x3d, 0x5a, 0x2b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x73, 0x6f, 0x6c, 0x6f, 0x2d, 0x69, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x2d, 0x67,
-	0x65, 0x6e, 0x2d, 0x65, 0x78, 0x74, 0x2f, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2f, 0x61, 0x70, 0x69,
-	0xb8, 0xf5, 0x04, 0x01, 0xc8, 0xf5, 0x04, 0x01, 0xc0, 0xf5, 0x04, 0x01, 0xd0, 0xf5, 0x04, 0x01,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x02, 0x73, 0x32, 0x22, 0x38, 0x0a, 0x08, 0x52, 0x65, 0x70, 0x65, 0x61, 0x74, 0x65, 0x64, 0x12,
+	0x14, 0x0a, 0x05, 0x66, 0x69, 0x72, 0x73, 0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x05,
+	0x66, 0x69, 0x72, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x18,
+	0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x06, 0x73, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x2a, 0x1c, 0x0a,
+	0x04, 0x54, 0x65, 0x73, 0x74, 0x12, 0x09, 0x0a, 0x05, 0x48, 0x45, 0x4c, 0x4c, 0x4f, 0x10, 0x00,
+	0x12, 0x09, 0x0a, 0x05, 0x57, 0x4f, 0x52, 0x4c, 0x44, 0x10, 0x01, 0x42, 0x3d, 0x5a, 0x2b, 0x67,
+	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x73, 0x6f, 0x6c, 0x6f, 0x2d, 0x69,
+	0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x2d, 0x67, 0x65, 0x6e, 0x2d, 0x65, 0x78, 0x74,
+	0x2f, 0x74, 0x65, 0x73, 0x74, 0x73, 0x2f, 0x61, 0x70, 0x69, 0xb8, 0xf5, 0x04, 0x01, 0xc8, 0xf5,
+	0x04, 0x01, 0xc0, 0xf5, 0x04, 0x01, 0xd0, 0xf5, 0x04, 0x01, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -946,7 +1005,7 @@ func file_tests_api_hello_proto_rawDescGZIP() []byte {
 }
 
 var file_tests_api_hello_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_tests_api_hello_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_tests_api_hello_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_tests_api_hello_proto_goTypes = []interface{}{
 	(Test)(0),               // 0: envoy.type.Test
 	(*Simple)(nil),          // 1: envoy.type.Simple
@@ -954,28 +1013,29 @@ var file_tests_api_hello_proto_goTypes = []interface{}{
 	(*Empty)(nil),           // 3: envoy.type.Empty
 	(*NestedEmpty)(nil),     // 4: envoy.type.NestedEmpty
 	(*MultipleStrings)(nil), // 5: envoy.type.MultipleStrings
-	nil,                     // 6: envoy.type.Nested.InitialEntry
-	nil,                     // 7: envoy.type.Nested.SimpleMapEntry
-	nil,                     // 8: envoy.type.Nested.MapExternalEntry
-	(*structpb.Struct)(nil), // 9: google.protobuf.Struct
+	(*Repeated)(nil),        // 6: envoy.type.Repeated
+	nil,                     // 7: envoy.type.Nested.InitialEntry
+	nil,                     // 8: envoy.type.Nested.SimpleMapEntry
+	nil,                     // 9: envoy.type.Nested.MapExternalEntry
+	(*structpb.Struct)(nil), // 10: google.protobuf.Struct
 }
 var file_tests_api_hello_proto_depIdxs = []int32{
 	1,  // 0: envoy.type.Nested.simple:type_name -> envoy.type.Simple
 	1,  // 1: envoy.type.Nested.other_simple:type_name -> envoy.type.Simple
 	0,  // 2: envoy.type.Nested.test:type_name -> envoy.type.Test
 	3,  // 3: envoy.type.Nested.empty:type_name -> envoy.type.Empty
-	9,  // 4: envoy.type.Nested.details:type_name -> google.protobuf.Struct
+	10, // 4: envoy.type.Nested.details:type_name -> google.protobuf.Struct
 	1,  // 5: envoy.type.Nested.skipper:type_name -> envoy.type.Simple
 	1,  // 6: envoy.type.Nested.x:type_name -> envoy.type.Simple
-	6,  // 7: envoy.type.Nested.initial:type_name -> envoy.type.Nested.InitialEntry
-	7,  // 8: envoy.type.Nested.simple_map:type_name -> envoy.type.Nested.SimpleMapEntry
+	7,  // 7: envoy.type.Nested.initial:type_name -> envoy.type.Nested.InitialEntry
+	8,  // 8: envoy.type.Nested.simple_map:type_name -> envoy.type.Nested.SimpleMapEntry
 	3,  // 9: envoy.type.Nested.empty_one_of:type_name -> envoy.type.Empty
 	4,  // 10: envoy.type.Nested.nested_one_of:type_name -> envoy.type.NestedEmpty
-	9,  // 11: envoy.type.Nested.repeated_external:type_name -> google.protobuf.Struct
-	8,  // 12: envoy.type.Nested.map_external:type_name -> envoy.type.Nested.MapExternalEntry
+	10, // 11: envoy.type.Nested.repeated_external:type_name -> google.protobuf.Struct
+	9,  // 12: envoy.type.Nested.map_external:type_name -> envoy.type.Nested.MapExternalEntry
 	2,  // 13: envoy.type.NestedEmpty.nested:type_name -> envoy.type.Nested
 	1,  // 14: envoy.type.Nested.InitialEntry.value:type_name -> envoy.type.Simple
-	9,  // 15: envoy.type.Nested.MapExternalEntry.value:type_name -> google.protobuf.Struct
+	10, // 15: envoy.type.Nested.MapExternalEntry.value:type_name -> google.protobuf.Struct
 	16, // [16:16] is the sub-list for method output_type
 	16, // [16:16] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
@@ -1049,6 +1109,18 @@ func file_tests_api_hello_proto_init() {
 				return nil
 			}
 		}
+		file_tests_api_hello_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Repeated); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_tests_api_hello_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	file_tests_api_hello_proto_msgTypes[1].OneofWrappers = []interface{}{
@@ -1063,7 +1135,7 @@ func file_tests_api_hello_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_tests_api_hello_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
