@@ -46,6 +46,7 @@ GO_IMPORT:=$(subst $(space),,$(GO_IMPORT_SPACES))
 
 .PHONY: generated-code
 generated-code:
+	rm -rf tests/api/*.go
 	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/protoc -I=. -I=./external --go_out="${EXT_IMPORT}:." extproto/ext.proto
 	PATH=$(DEPSGOBIN):$$PATH cp -r ${PACKAGE}/extproto/* extproto
 	PATH=$(DEPSGOBIN):$$PATH $(DEPSGOBIN)/protoc -I=. -I=./extproto -I=./external --go_out="." --ext_out="." tests/api/hello.proto

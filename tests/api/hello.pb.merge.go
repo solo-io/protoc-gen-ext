@@ -214,3 +214,15 @@ func (m *MultipleStrings) Merge(overrides *MultipleStrings) {
 	m.S2 = overrides.S2
 
 }
+
+// Merge non-nil fields from overrides into m
+func (m *Repeated) Merge(overrides *Repeated) {
+	if m == nil || overrides == nil {
+		return
+	}
+
+	m.First = overrides.First
+
+	m.Second = overrides.Second
+
+}

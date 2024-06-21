@@ -367,3 +367,32 @@ func (m *MultipleStrings) Clone() proto.Message {
 
 	return target
 }
+
+// Clone function
+func (m *Repeated) Clone() proto.Message {
+	var target *Repeated
+	if m == nil {
+		return target
+	}
+	target = &Repeated{}
+
+	if m.GetFirst() != nil {
+		target.First = make([]string, len(m.GetFirst()))
+		for idx, v := range m.GetFirst() {
+
+			target.First[idx] = v
+
+		}
+	}
+
+	if m.GetSecond() != nil {
+		target.Second = make([]string, len(m.GetSecond()))
+		for idx, v := range m.GetSecond() {
+
+			target.Second[idx] = v
+
+		}
+	}
+
+	return target
+}
