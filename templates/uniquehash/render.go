@@ -1,4 +1,4 @@
-package hash
+package uniquehash
 
 import (
 	"bytes"
@@ -11,6 +11,7 @@ import (
 
 type Value struct {
 	FieldAccessor  string
+	FieldName      string
 	Hasher         string
 	InnerTemplates struct {
 		Key   string
@@ -56,6 +57,7 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var b bytes.Buffer
 	err = tpl.Execute(&b, Value{
 		FieldAccessor: fns.accessor(field),
+		FieldName:     fns.fieldName(field),
 		Hasher:        "hasher",
 	})
 	return b.String(), err
@@ -74,6 +76,7 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 	}
 	values := Value{
 		FieldAccessor: fns.accessor(field),
+		FieldName:     fns.fieldName(field),
 		Hasher:        "innerHash",
 		InnerTemplates: struct {
 			Key   string
@@ -92,6 +95,7 @@ func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 		return "", err
 	}
 	values := Value{
+		FieldName:     fns.fieldName(field),
 		FieldAccessor: fns.accessor(field),
 		Hasher:        "innerHash",
 		InnerTemplates: struct {
@@ -125,6 +129,7 @@ func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, hasher
 
 	var b bytes.Buffer
 	err := tpl.Execute(&b, Value{
+		FieldName:     valueName,
 		FieldAccessor: valueName,
 		Hasher:        hasherName,
 	})

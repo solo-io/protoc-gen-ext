@@ -1,11 +1,11 @@
-package hash
+package uniquehash
 
 const msgTpl = `
-// Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// HashUnique function generates a hash of the object that is unique to the object by
+// hashing field name and value pairs.
+// Replaces Hash due to original hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
-// Use the UniqueHash function instead.
-func (m {{ (msgTyp .).Pointer }}) Hash(hasher hash.Hash64) (uint64, error) {
+func (m {{ (msgTyp .).Pointer }}) HashUnique(hasher hash.Hash64) (uint64, error) {
 		if m == nil { return 0, nil }
 		if hasher == nil { hasher = fnv.New64() }
 		var err error
