@@ -26,7 +26,7 @@ var (
 )
 
 // Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// Deprecated: due to hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
 // Use the UniqueHash function instead.
 func (m *Simple) Hash(hasher hash.Hash64) (uint64, error) {
@@ -187,7 +187,7 @@ func (m *Simple) Hash(hasher hash.Hash64) (uint64, error) {
 }
 
 // Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// Deprecated: due to hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
 // Use the UniqueHash function instead.
 func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
@@ -453,7 +453,7 @@ func (m *Nested) Hash(hasher hash.Hash64) (uint64, error) {
 }
 
 // Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// Deprecated: due to hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
 // Use the UniqueHash function instead.
 func (m *Empty) Hash(hasher hash.Hash64) (uint64, error) {
@@ -472,7 +472,7 @@ func (m *Empty) Hash(hasher hash.Hash64) (uint64, error) {
 }
 
 // Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// Deprecated: due to hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
 // Use the UniqueHash function instead.
 func (m *NestedEmpty) Hash(hasher hash.Hash64) (uint64, error) {
@@ -505,7 +505,7 @@ func (m *NestedEmpty) Hash(hasher hash.Hash64) (uint64, error) {
 }
 
 // Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// Deprecated: due to hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
 // Use the UniqueHash function instead.
 func (m *MultipleStrings) Hash(hasher hash.Hash64) (uint64, error) {
@@ -532,7 +532,7 @@ func (m *MultipleStrings) Hash(hasher hash.Hash64) (uint64, error) {
 }
 
 // Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// Deprecated: due to hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
 // Use the UniqueHash function instead.
 func (m *Repeated) Hash(hasher hash.Hash64) (uint64, error) {
