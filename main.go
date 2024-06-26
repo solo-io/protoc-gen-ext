@@ -9,7 +9,6 @@ import (
 	"github.com/solo-io/protoc-gen-ext/module/equal"
 	"github.com/solo-io/protoc-gen-ext/module/hash"
 	"github.com/solo-io/protoc-gen-ext/module/merge"
-	"github.com/solo-io/protoc-gen-ext/module/uniquehash"
 )
 
 func main() {
@@ -19,7 +18,6 @@ func main() {
 		pgs.SupportedFeatures(&feat),
 	).RegisterModule(
 		hash.Hash(),
-		uniquehash.Hash(),
 		equal.Equal(),
 		merge.Merge(),
 		clone.Clone(),

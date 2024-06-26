@@ -2,6 +2,11 @@ package hash
 
 const messageTpl = `
 		if h, ok := interface{}({{ .FieldAccessor }}).(safe_hasher.SafeHasher); ok {
+			{{ if .UniqueHash }}
+			if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+				return 0, err
+			}
+			{{ end }}
 			if _, err = h.Hash({{ .Hasher }}); err != nil {
 				return  0, err 
 			}
@@ -9,6 +14,11 @@ const messageTpl = `
 			if fieldValue, err := hashstructure.Hash({{ .FieldAccessor }}, nil); err != nil {
 				return 0, err
 			} else {
+				{{ if .UniqueHash }}
+				if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+					return 0, err
+				}
+				{{ end }}
 				if err := binary.Write({{ .Hasher }}, binary.LittleEndian, fieldValue); err != nil {
 					return 0, err
 				}
@@ -17,17 +27,32 @@ const messageTpl = `
 `
 
 const primitiveTmpl = `
+		{{ if .UniqueHash }}
+		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
+		{{ end }}
 		err = binary.Write({{ .Hasher }}, binary.LittleEndian,  {{ .FieldAccessor }} )
 		if err != nil {return 0, err}
 `
 
 const bytesTpl = `
+		{{ if .UniqueHash }}
+		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
+		{{ end }}
 		if _, err = {{ .Hasher }}.Write({{ .FieldAccessor }}); err != nil {
 			return 0, err
 		}
 `
 
 const stringTpl = `
+		{{ if .UniqueHash }}
+		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
+		{{ end }}
 		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldAccessor }})); err != nil {
 			return 0, err
 		}
@@ -54,7 +79,17 @@ const mapTpl = `
 `
 
 const repeatedTpl = `
+		{{ if .UniqueHash }}
+		if _, err = hasher.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
 		for i, v := range {{ .FieldAccessor }} {
+			if _, err = hasher.Write([]byte(strconv.Itoa(i))); err != nil {
+				return 0, err
+			}
+		{{ else }}
+		for _, v := range {{ .FieldAccessor }} {
+		{{ end }}
 			{{ .InnerTemplates.Value }}
 		}
 `

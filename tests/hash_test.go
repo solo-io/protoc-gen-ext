@@ -246,56 +246,22 @@ var _ = Describe("hash", func() {
 	})
 
 	Context("Hashing object values of same type", func() {
+		var (
+			object1 *api.MultipleStrings
+			object2 *api.MultipleStrings
+		)
 		When("multiple fields of same type have the same value", func() {
-			It("should produce different hash values", func() {
-				object1 := &api.MultipleStrings{
+			BeforeEach(func() {
+				object1 = &api.MultipleStrings{
 					S1: "hello",
 					S2: "",
 				}
-				object2 := &api.MultipleStrings{
+				object2 = &api.MultipleStrings{
 					S1: "",
 					S2: "hello",
 				}
-				hash1, err := object1.Hash(nil)
-				Expect(err).NotTo(HaveOccurred())
-
-				hash2, err := object2.Hash(nil)
-				Expect(err).NotTo(HaveOccurred())
-
-				Expect(hash1).NotTo(Equal(hash2))
 			})
-		})
-
-		When("multiple fields of same type have different values", func() {
-			It("should produce different hash values", func() {
-				object1 := &api.MultipleStrings{
-					S1: "hello",
-					S2: "",
-				}
-				object2 := &api.MultipleStrings{
-					S1: "",
-					S2: "world",
-				}
-				hash1, err := object1.Hash(nil)
-				Expect(err).NotTo(HaveOccurred())
-
-				hash2, err := object2.Hash(nil)
-				Expect(err).NotTo(HaveOccurred())
-
-				Expect(hash1).NotTo(Equal(hash2))
-			})
-		})
-
-		When("two objects are the same", func() {
-			It("should produce the same hash value", func() {
-				object1 := &api.MultipleStrings{
-					S1: "hello",
-					S2: "world",
-				}
-				object2 := &api.MultipleStrings{
-					S1: "hello",
-					S2: "world",
-				}
+			It("should produce the same hash values when using the Hash method", func() {
 				hash1, err := object1.Hash(nil)
 				Expect(err).NotTo(HaveOccurred())
 
@@ -304,22 +270,109 @@ var _ = Describe("hash", func() {
 
 				Expect(hash1).To(Equal(hash2))
 			})
+			It("should produce different values when using the HashUnique method", func() {
+				hash1, err := object1.HashUnique(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.HashUnique(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).NotTo(Equal(hash2))
+			})
 		})
 
-		When("two objects have different repeated fields of the same type with the same values", func() {
-			It("should produce different hash values", func() {
-				object1 := &api.Repeated{
-					First: []string{"hello", "world"},
+		When("multiple fields of same type have different values", func() {
+			BeforeEach(func() {
+				object1 = &api.MultipleStrings{
+					S1: "hello",
+					S2: "",
 				}
+				object2 = &api.MultipleStrings{
+					S1: "",
+					S2: "hello",
+				}
+			})
+			It("should produce the same hash values when using the Hash method", func() {
+				hash1, err := object1.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
 
-				object2 := &api.Repeated{
-					Second: []string{"hello", "world"},
+				hash2, err := object2.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).To(Equal(hash2))
+			})
+			It("should produce different hash values when using the HashUnique method", func() {
+				hash1, err := object1.HashUnique(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.HashUnique(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).NotTo(Equal(hash2))
+			})
+		})
+
+		When("two objects are the same", func() {
+			BeforeEach(func() {
+				object1 = &api.MultipleStrings{
+					S1: "hello",
+					S2: "world",
 				}
+				object2 = &api.MultipleStrings{
+					S1: "hello",
+					S2: "world",
+				}
+			})
+			It("should produce the same hash value when using the Hash method", func() {
 
 				hash1, err := object1.Hash(nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				hash2, err := object2.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).To(Equal(hash2))
+			})
+			It("should produce the same hash value when using the HashUnique method", func() {
+				hash1, err := object1.HashUnique(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.HashUnique(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).To(Equal(hash2))
+			})
+		})
+
+		When("two objects have different repeated fields of the same type with the same values", func() {
+			var (
+				object1 *api.Repeated
+				object2 *api.Repeated
+			)
+
+			BeforeEach(func() {
+				object1 = &api.Repeated{
+					First: []string{"hello", "world"},
+				}
+
+				object2 = &api.Repeated{
+					Second: []string{"hello", "world"},
+				}
+			})
+			It("should produce the same hash values when using the Hash method", func() {
+				hash1, err := object1.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.Hash(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(hash1).To(Equal(hash2))
+			})
+			It("should produce different hash values when using the HashUnique method", func() {
+				hash1, err := object1.HashUnique(nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				hash2, err := object2.HashUnique(nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				Expect(hash1).NotTo(Equal(hash2))

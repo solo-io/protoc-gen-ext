@@ -11,14 +11,16 @@ import (
 
 type Value struct {
 	FieldAccessor  string
+	FieldName      string
 	Hasher         string
 	InnerTemplates struct {
 		Key   string
 		Value string
 	}
+	UniqueHash bool
 }
 
-func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
+func (fns goSharedFuncs) render(field pgs.Field, hashUnique bool) (string, error) {
 	var tpl *template.Template
 
 	// check if skip hash is set on a given field
@@ -37,9 +39,9 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 
 		tpl = template.Must(fns.tpl.New("primitive").Parse(primitiveTmpl))
 	} else if field.Type().IsMap() {
-		return fns.renderMap(field)
+		return fns.renderMap(field, hashUnique)
 	} else if field.Type().IsRepeated() {
-		return fns.renderRepeated(field)
+		return fns.renderRepeated(field, hashUnique)
 	} else {
 		switch field.Type().ProtoType() {
 		case pgs.BytesT:
@@ -56,25 +58,28 @@ func (fns goSharedFuncs) render(field pgs.Field) (string, error) {
 	var b bytes.Buffer
 	err = tpl.Execute(&b, Value{
 		FieldAccessor: fns.accessor(field),
+		FieldName:     fns.fieldName(field),
 		Hasher:        "hasher",
+		UniqueHash:    hashUnique,
 	})
 	return b.String(), err
 }
 
-func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
-
+func (fns goSharedFuncs) renderMap(field pgs.Field, uniqueHash bool) (string, error) {
 	var b bytes.Buffer
-	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", "innerHash")
+	valueTemplate, err := fns.simpleRender(field.Type().Element(), "v", "innerHash", uniqueHash)
 	if err != nil {
 		return "", err
 	}
-	keyTemplate, err := fns.simpleRender(field.Type().Key(), "k", "innerHash")
+	keyTemplate, err := fns.simpleRender(field.Type().Key(), "k", "innerHash", uniqueHash)
 	if err != nil {
 		return "", err
 	}
 	values := Value{
 		FieldAccessor: fns.accessor(field),
+		FieldName:     fns.fieldName(field),
 		Hasher:        "innerHash",
+		UniqueHash:    uniqueHash,
 		InnerTemplates: struct {
 			Key   string
 			Value string
@@ -85,15 +90,17 @@ func (fns goSharedFuncs) renderMap(field pgs.Field) (string, error) {
 	return b.String(), err
 }
 
-func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
+func (fns goSharedFuncs) renderRepeated(field pgs.Field, hashUnique bool) (string, error) {
 	var b bytes.Buffer
-	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", "hasher")
+	innerTemplate, err := fns.simpleRender(field.Type().Element(), "v", "hasher", hashUnique)
 	if err != nil {
 		return "", err
 	}
 	values := Value{
+		FieldName:     fns.fieldName(field),
 		FieldAccessor: fns.accessor(field),
 		Hasher:        "innerHash",
+		UniqueHash:    hashUnique,
 		InnerTemplates: struct {
 			Key   string
 			Value string
@@ -104,7 +111,7 @@ func (fns goSharedFuncs) renderRepeated(field pgs.Field) (string, error) {
 	return b.String(), err
 }
 
-func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, hasherName string) (string, error) {
+func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, hasherName string, uniqueHash bool) (string, error) {
 	var tpl *template.Template
 	if field.ProtoType().IsNumeric() ||
 		field.ProtoType() == pgs.BoolT ||
@@ -125,8 +132,10 @@ func (fns goSharedFuncs) simpleRender(field pgs.FieldTypeElem, valueName, hasher
 
 	var b bytes.Buffer
 	err := tpl.Execute(&b, Value{
+		FieldName:     valueName,
 		FieldAccessor: valueName,
 		Hasher:        hasherName,
+		UniqueHash:    uniqueHash,
 	})
 	return b.String(), err
 }
