@@ -2,11 +2,9 @@ package hash
 
 const messageTpl = `
 		if h, ok := interface{}({{ .FieldAccessor }}).(safe_hasher.SafeHasher); ok {
-			{{ if .UniqueHash }}
 			if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
 				return 0, err
 			}
-			{{ end }}
 			if _, err = h.Hash({{ .Hasher }}); err != nil {
 				return  0, err 
 			}
@@ -14,11 +12,9 @@ const messageTpl = `
 			if fieldValue, err := hashstructure.Hash({{ .FieldAccessor }}, nil); err != nil {
 				return 0, err
 			} else {
-				{{ if .UniqueHash }}
 				if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
 					return 0, err
 				}
-				{{ end }}
 				if err := binary.Write({{ .Hasher }}, binary.LittleEndian, fieldValue); err != nil {
 					return 0, err
 				}
