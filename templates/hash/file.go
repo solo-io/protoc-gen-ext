@@ -37,6 +37,7 @@ var (
 )
 
 {{ range .AllMessages }}
-	{{ template "msg" . }}
+	{{ template "hash" . }}
+	{{ template "uniquehash" . }}
 {{ end }}
 `

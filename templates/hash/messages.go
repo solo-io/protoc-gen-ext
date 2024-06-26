@@ -23,26 +23,32 @@ const messageTpl = `
 `
 
 const primitiveTmpl = `
+		{{ if .UniqueHash }}
 		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
 			return 0, err
 		}
+		{{ end }}
 		err = binary.Write({{ .Hasher }}, binary.LittleEndian,  {{ .FieldAccessor }} )
 		if err != nil {return 0, err}
 `
 
 const bytesTpl = `
+		{{ if .UniqueHash }}
 		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
 			return 0, err
 		}
+		{{ end }}
 		if _, err = {{ .Hasher }}.Write({{ .FieldAccessor }}); err != nil {
 			return 0, err
 		}
 `
 
 const stringTpl = `
+		{{ if .UniqueHash }}
 		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
 			return 0, err
 		}
+		{{ end }}
 		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldAccessor }})); err != nil {
 			return 0, err
 		}
@@ -69,6 +75,7 @@ const mapTpl = `
 `
 
 const repeatedTpl = `
+		{{ if .UniqueHash }}
 		if _, err = hasher.Write([]byte("{{ .FieldName }}")); err != nil {
 			return 0, err
 		}
@@ -76,6 +83,9 @@ const repeatedTpl = `
 			if _, err = hasher.Write([]byte(strconv.Itoa(i))); err != nil {
 				return 0, err
 			}
+		{{ else }}
+		for _, v := range {{ .FieldAccessor }} {
+		{{ end }}
 			{{ .InnerTemplates.Value }}
 		}
 `
