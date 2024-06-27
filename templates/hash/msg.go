@@ -2,7 +2,7 @@ package hash
 
 const msgTpl = `
 // Hash function
-// Deprecated due to hashing implemention only using field values. The omission
+// Deprecated: due to hashing implemention only using field values. The omission
 // of the field name in the hash calculation can lead to hash collisions.
 // Use the UniqueHash function instead.
 func (m {{ (msgTyp .).Pointer }}) Hash(hasher hash.Hash64) (uint64, error) {
