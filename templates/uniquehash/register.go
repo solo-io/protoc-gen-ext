@@ -1,4 +1,4 @@
-package hash
+package uniquehash
 
 import (
 	"text/template"

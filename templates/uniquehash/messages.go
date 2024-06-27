@@ -1,4 +1,4 @@
-package hash
+package uniquehash
 
 const messageTpl = `
 		if h, ok := interface{}({{ .FieldAccessor }}).(safe_hasher.SafeHasher); ok {
@@ -23,17 +23,26 @@ const messageTpl = `
 `
 
 const primitiveTmpl = `
+		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
 		err = binary.Write({{ .Hasher }}, binary.LittleEndian,  {{ .FieldAccessor }} )
 		if err != nil {return 0, err}
 `
 
 const bytesTpl = `
+		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
 		if _, err = {{ .Hasher }}.Write({{ .FieldAccessor }}); err != nil {
 			return 0, err
 		}
 `
 
 const stringTpl = `
+		if _, err = {{ .Hasher }}.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
 		if _, err = {{ .Hasher }}.Write([]byte({{ .FieldAccessor }})); err != nil {
 			return 0, err
 		}
@@ -60,7 +69,13 @@ const mapTpl = `
 `
 
 const repeatedTpl = `
-		for _, v := range {{ .FieldAccessor }} {
+		if _, err = hasher.Write([]byte("{{ .FieldName }}")); err != nil {
+			return 0, err
+		}
+		for i, v := range {{ .FieldAccessor }} {
+			if _, err = hasher.Write([]byte(strconv.Itoa(i))); err != nil {
+				return 0, err
+			}
 			{{ .InnerTemplates.Value }}
 		}
 `
