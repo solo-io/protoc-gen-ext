@@ -5,7 +5,7 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"github.com/solo-io/protoc-gen-ext/extproto"
 	"github.com/solo-io/protoc-gen-ext/templates"
-	"github.com/solo-io/protoc-gen-ext/templates/hash"
+	"github.com/solo-io/protoc-gen-ext/templates/uniquehash"
 )
 
 const (
@@ -28,7 +28,7 @@ func (m *HashModule) Name() string { return hasherName }
 
 func (m *HashModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
 	// Process file-level templates
-	tpl := templates.Template(m.Parameters(), hash.Register)
+	tpl := templates.Template(m.Parameters(), uniquehash.Register)
 
 	for _, f := range targets {
 		var hashAll bool
