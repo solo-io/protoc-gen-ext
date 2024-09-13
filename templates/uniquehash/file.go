@@ -28,6 +28,7 @@ var (
 	_ = binary.LittleEndian
 	_ = new(hash.Hash64)
 	_ = fnv.New64
+	_ = strconv.Itoa
 	_ = hashstructure.Hash
 	_ = new(safe_hasher.SafeHasher)
 
